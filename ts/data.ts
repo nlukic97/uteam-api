@@ -1,10 +1,8 @@
-interface ResponseData {
+export interface ResponseData {
     status: number;
     message: string;
   }
 
-function createResponseData(responseData: ResponseData): ResponseData{
+export function createResponseData(responseData: ResponseData): ResponseData{
     return responseData
 }
-
-export default createResponseData;

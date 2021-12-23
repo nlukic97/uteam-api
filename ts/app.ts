@@ -1,20 +1,20 @@
-import express from 'express';
-import createResponseData from './data';
+import express, {Application, Request, Response} from 'express';
+import {ResponseData,createResponseData} from './data';
 
-const app = express();
+const app: Application = express();
 
 app.use(express.json()) 
 
 const port:number = 3000;
 const host:string = 'http://localhost'
 
-let response = createResponseData({
+let response: ResponseData = createResponseData({
     status:200,
     message:'OK'
 })
 
 // Wildcard - all get requests will return status 200 - OK. Will change later.
-app.get('*', (req, res) => {
+app.get('*', (req: Request, res: Response) => {
         
     // res.end(responseData);
     res.status(200).json(response);
