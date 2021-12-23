@@ -12,9 +12,8 @@
     }
 ---
 ## Development
-For development, clone the repository and run the following commands:
+For development, clone the repository and run:
 
-    git clone
     npm install
 
 Next, run these two scripts to compile the typescript code and to run the nodemon server (both in watch mode).
