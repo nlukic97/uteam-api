@@ -3,7 +3,7 @@ interface ResponseData {
     message: string;
   }
 
-function createResponseData(responseData: ResponseData){
+function createResponseData(responseData: ResponseData): ResponseData{
     return responseData
 }
 

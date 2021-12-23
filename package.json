@@ -2,7 +2,7 @@
   "name": "uteam-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/app.js",
   "dependencies": {
     "accepts": "^1.3.7",
     "array-flatten": "^1.1.1",
@@ -55,9 +55,10 @@
     "vary": "^1.1.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/app.js",
-    "start:nodemon":"nodemon dist/app.js"
+    "start": "tsc && node dist/app.js",
+    "dev:tsc":"tsc --watch",
+    "dev:server":"nodemon ./dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
