@@ -57,7 +57,9 @@
   "scripts": {
     "start": "tsc && node dist/app.js",
     "dev:tsc": "tsc --watch",
-    "dev:server": "nodemon ./dist/app.js"
+    "dev:server": "nodemon ./dist/app.js",
+    "lint": "eslint . --ext .ts"
+
   },
   "repository": {
     "type": "git",
