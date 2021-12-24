@@ -5,10 +5,10 @@ const app: Application = express();
 
 app.use(express.json()) 
 
-const port:number = 3000;
-const host:string = 'http://localhost'
+const port = 3000;
+const host = 'http://localhost';
 
-let response: ResponseData = createResponseData({
+const response: ResponseData = createResponseData({
     status:200,
     message:'OK'
 })
