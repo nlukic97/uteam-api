@@ -13,18 +13,33 @@
 
 ---
 
+## Requirements
+
+- `MySQL server 5.7.33` (higher versions should also be compatible)
+- `NodeJS LTS`
+
+---
+
 ## Development
 
-Please install the following plugins on your vsCode:
+### Please install the following plugins on your vsCode:
 
-- Prettier - Code formatter
-- ESlint
+- `Prettier - Code formatter`
+- `ESlint`
 
-Next, clone the repository, open it in the command line and run:
+### Next, install a `MySQL 5.7` server and create a database with a name of your choice.
+
+### Next, run the following command:
+
+    cp .env.example .env
+
+... which will create a `.env` file. Open it and insert the required environemnt variables (port and database connection parameters).
+
+### Next, clone the repository, open it in the command line and run:
 
     npm install
 
-Next, run these two scripts to compile the typescript code and to run the nodemon server (both in watch mode).
+### `Last step`: run these two scripts (preferably in different cmd windows) to compile the typescript code and to run the nodemon server (both will be in watch mode).
 
     npm run dev:tsc
     npm run dev:server
@@ -33,6 +48,17 @@ Next, run these two scripts to compile the typescript code and to run the nodemo
 
 ## Production
 
-On the production server, run the following command:
+Perform all the steps not including the `Last step`, but instead run the following command:
 
     npm run start
+
+You also might need to leave the PORT variable in `.env` empty (such as hosting your server on Heroku, for example).
+
+---
+
+## Models
+
+- User
+  - username
+  - email
+  - password

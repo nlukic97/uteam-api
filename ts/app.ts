@@ -5,12 +5,22 @@ import { ResponseData, createResponseData } from './data'
 import dotenv from 'dotenv'
 dotenv.config()
 
-// Adding Sequelize and testing the connection to the sql server
+/**
+ * ********* Adding Sequelize and testing the connection to the sql server *********
+ *
+ * */
+
 import { Sequelize, DataTypes } from 'sequelize'
-const sequelize = new Sequelize('uteam-api', 'root', '', {
-  host: 'localhost',
-  dialect: 'mysql',
-})
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME, //check the 'environment.d.ts' file in the project root"
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+  }
+)
 
 sequelize
   .authenticate()
@@ -21,7 +31,7 @@ sequelize
     console.error('Unable to connect to the database:', error)
   })
 
-// User model
+// User Model
 const User = sequelize.define(
   'User',
   {
@@ -47,6 +57,7 @@ const User = sequelize.define(
 User.sync() // will create the user table if it does not exist
 // sequelize.sync() //will create tables for all models if they do not already exist
 
+//Adding three users
 function insertNewUser(username: string, email: string, password: string) {
   const user = User.build({
     username,
@@ -55,9 +66,32 @@ function insertNewUser(username: string, email: string, password: string) {
   })
   user.save()
 }
-insertNewUser('Somename2', 'example@email.com', 'topsecret')
 
-// Initializing application
+// Adding three users
+insertNewUser('User', 'example@email.com', 'topsecret')
+insertNewUser('User', 'example@email.com', 'topsecret')
+insertNewUser('User', 'example@email.com', 'topsecret')
+
+// selecting a user
+async function getUser(params: object) {
+  const user: object[] = await User.findAll({
+    where: {
+      ...params,
+    },
+  })
+
+  return user
+}
+
+getUser({ username: 'User' }).then(users => {
+  // console.log(users)
+  console.log('Number of users who matched the SQL query:', users.length)
+})
+
+/**
+ * ********* Initializing application *********
+ *
+ * */
 const app: Application = express()
 app.use(express.json())
 
@@ -70,6 +104,15 @@ const response: ResponseData = createResponseData({
 })
 
 // Routes
+
+/* //  /user-count - counts the number of users in the user table, and returns it.
+app.get('/user-count', async (_, res: Response) => {
+  const users = await User.findAll()
+  res
+    .status(200)
+    .json({ message: `There are currently ${users.length} users.` })
+}) */
+
 // - /* - all get requests will return status 200 - OK. Will change later.
 app.get('*', (req: Request, res: Response) => {
   // res.end(responseData);
