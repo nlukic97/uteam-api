@@ -1,0 +1,3 @@
+# Ignore node modules and all json (config) flies
+node_modules
+*json

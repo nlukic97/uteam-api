@@ -1,8 +1,8 @@
 export interface ResponseData {
-    status: number;
-    message: string;
-  }
+  status: number
+  message: string
+}
 
-export function createResponseData(responseData: ResponseData): ResponseData{
-    return responseData
+export function createResponseData(responseData: ResponseData): ResponseData {
+  return responseData
 }

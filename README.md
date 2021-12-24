@@ -2,17 +2,25 @@
 
 - Express API project using Typescript
 
-
 ## API routes:
+
 `/*` - wildcard (any url request) - returns this JSON object:
-            
+
     {
         status:200,
         message:'OK'
     }
+
 ---
+
 ## Development
-For development, clone the repository and run:
+
+Please install the following plugins on your vsCode:
+
+- Prettier - Code formatter
+- ESlint
+
+Next, clone the repository, open it in the command line and run:
 
     npm install
 
@@ -22,7 +30,9 @@ Next, run these two scripts to compile the typescript code and to run the nodemo
     npm run dev:server
 
 ---
+
 ## Production
+
 On the production server, run the following command:
-    
+
     npm run start
