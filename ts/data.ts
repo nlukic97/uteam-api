@@ -1,4 +1,6 @@
-export interface ResponseData {
+// No longer being used
+
+/* export interface ResponseData {
   status: number
   message: string
 }
@@ -6,3 +8,4 @@ export interface ResponseData {
 export function createResponseData(responseData: ResponseData): ResponseData {
   return responseData
 }
+ */
