@@ -23,12 +23,12 @@ const app: Application = express()
 app.use(bodyParser.urlencoded({ extended: false })) //what does this mean?
 app.use(express.json())
 
-// Seeder for users - only use once
-/* import UserSeeder from './seeders/UserSeeder'
-UserSeeder(20) */
-
 // routing
 import routes from './routes/routes'
+/* import Seeder from './seeders/Seeder'
+
+Seeder() */
+
 app.use('/', routes)
 
 const port = process.env.PORT

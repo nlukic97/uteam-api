@@ -23,4 +23,6 @@ const User = db.define(
   }
 )
 
+User.sync({ force: false })
+
 export default User
