@@ -56,5 +56,7 @@ fs.writeFile(ModelPath, content, err => {
 
   if (process.argv[3].toLowerCase() === 'seeder') {
     exec(`tsc && npm run createSeeder ${Title} && tsc`)
+  } else if (process.argv[3].toLowerCase() === 'controller') {
+    exec(`tsc && npm run createController ${Title} && tsc`)
   }
 })

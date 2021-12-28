@@ -1,22 +1,30 @@
 # UTEAM - api - Nikola Lukic
 
-- Express API project using Typescript
+- Express API project using Typescript, Sequalize ORM, and MySQL.
+
+---
 
 ## API routes:
 
-`/*` - wildcard (any url request) - returns this JSON object:
+### GET Routes
 
-    {
-        status:200,
-        message:'OK'
-    }
+| Endpoint       | Type | Description                                             |
+| -------------- | ---- | ------------------------------------------------------- |
+| `/getAllUsers` | GET  | Returns the number of rows in the `users` table.        |
+| `/* `          | GET  | Wildcard route. Returns an object containing a message. |
+
+### POST Routes
+
+| Endpoint         | Type | Expected request body                                       | Description                                      |
+| ---------------- | ---- | ----------------------------------------------------------- | ------------------------------------------------ |
+| `/insertNewUser` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table. |
 
 ---
 
 ## Requirements
 
 - `MySQL server 5.7.33` (higher versions should also be compatible)
-- `NodeJS LTS`
+- `NodeJS v.16.13.0`
 
 ---
 
