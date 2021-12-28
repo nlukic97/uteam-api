@@ -15,16 +15,16 @@ exec(`touch ${ControllerPath} && tsc`)
 const content = `import { Request, Response } from 'express'
 
 /** Add methods underneath*/
-const wildcard = (req: Request, res: Response) => {
-    // res.status(200).json({
-        //  status: 200,
-        //  message: 'OK',
-        //})
-    }
+const doSomething = (req: Request, res: Response) => {
+    res.status(200).json({
+      status: 200,
+      message: 'OK',
+    })
+}
     
 /** Export the methods*/
 const ${Title}Controller = {
-  wildcard,
+  doSomething,
 }
 
 export default ${Title}Controller

@@ -2,7 +2,7 @@
 import UserSeeder from './UserSeeder'
 
 const Seeder = () => {
-  /* Add seeders here */
+  /* Add seeder calls here */
   UserSeeder(20)
 }
 

@@ -1,51 +1,117 @@
-## Seeders
+# Seeders
 
-The database can be seeded after the typescript has been compiled to javascript.
+The database can be seeded after the typescript has been compiled to javascript. However, using a seeder is completely optional.
 In order to seed the users table, please run the following command:
 
-    npm run seed
+```sh
+npm run seed
+```
 
 You can edit the amount of users you would like to be added to the users table by editing the number passed to the `UserSeeder` function in the `./seeders/Seeder.ts` file (make sure to compile the ts if you make any edits to the seeder).
 
-## Custom seeder
+---
 
-You can also create your own custom seeders. Seeding can be done if a model exists for the table you would like to seed. Lets say you would like to create a seeder for you `Movie` model. You would run:
+## Creating a database seeder
 
-    npm run createSeeder Movie
+You can also create your own custom seeders. Seeding can be done if a model exists for the table you would like to seed. If the model does not exist, you will not be able to make a seeder from the CLI.
 
-If the model does not exist, you will have to create it before a seeder can be generated.
+Lets say you would like to create a model and seeder for you `Movie` model. You would run:
 
-    npm run createModel Movie
+```sh
+npm run createModel Movie
+npm run createSeeder Movie
+```
 
 Another option is to generate both a new model and a new seeder by entering:
 
-    npm run createModel Movie seeder
+```sh
+npm run createModel Movie seeder
+```
 
 This will create the following files:
 
 - `ts/models/Movie.ts`
 - `ts/seeders/MovieSeeder.ts`
 
-Update your model definition following the [sequelize documentation](https://sequelize.org/master/manual/model-basics.html).
+1. Update your model definition in `ts/models/Movie.ts` following the [sequelize documentation](https://sequelize.org/master/manual/model-basics.html). Here is an example:
 
-Next, update the `MovieSeeder.ts` to contain the fields you previously defined in the `Movie.ts` model.
+   ```js
+   import { DataTypes } from 'sequelize'
+   import db from '../config/database'
 
-In the file `ts/seeders/Seeder.ts`, you must:
+   // Uncomment the block comment underneath, and define your model.
 
-- import the movie seeder
-- call it (passing in a number telling the seeder how many times to perform the `MovieSeeder` logic).
+   const Movie = db.define(
+     'Movie',
+     {
+       title: {
+         type: DataTypes.STRING,
+         allowNull: false,
+       },
+       views: {
+         type: DataTypes.STRING,
+         allowNull: false,
+       },
+     },
+     {
+       tableName: 'movies', //providing table name directly
+     }
+   )
 
-        /* Seeder imports */
-        import UserSeeder from './UserSeeder'
-        import MovieSeeder from './MovieSeeder' // ---- import
+   Movie.sync({ force: false })
 
-        const Seeder = () => {
-            /* Add seeders here */
-            UserSeeder(20)
-            MovieSeeder(20) // ---- seeder call (we are calling it 20 times to add 20 records to the movies table)
-        }
+   export default Movie
+   ```
 
-        /* Running the seeder */
-        Seeder()
+2. Next, update the `ts/seeders/MovieSeeder.ts` to contain suitable data (that fits the previously defined model). Here is an example:
 
-In order to seed, run `npm run seed`.
+   ```js
+   import dotenv from 'dotenv'
+   dotenv.config()
+
+   /* Import model */
+   import Movie from '../models/Movie'
+
+   /* Other modules */
+   import faker from 'faker'
+
+   const MovieSeeder = (max: number): void => {
+     let num = 0
+
+     while (num < max) {
+       Movie.build({
+         title: faker.name.findName(), //using the faker library to get a name
+         views: 12, //just using 12 for every entry
+       }).save()
+
+       num++
+     }
+   }
+
+   export default MovieSeeder
+   /*please make sure to import this seeder into Seeder.ts, and to call it. */
+   ```
+
+3. In the file `ts/seeders/Seeder.ts`, you must:
+
+   - import the movie seeder
+   - call it (passing in a number telling the seeder how many times to perform the `MovieSeeder` logic).
+
+```js
+/* Seeder import */
+import MovieSeeder from './MovieSeeder' // ---- import
+
+const Seeder = () => {
+  /* Add seeder calls here */
+  MovieSeeder(20)
+}
+
+/* Running the seeder(s) */
+Seeder()
+```
+
+In order to seed the database, run
+
+```sh
+npm run seed
+```

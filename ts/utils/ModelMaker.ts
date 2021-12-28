@@ -35,7 +35,6 @@ const ${Title} = db.define(
     },
   },
   {
-    // freezeTableName: true, //means that the table for a User model must be named 'User'
     tableName: '${pluralize.plural(title)}', //providing table name directly
   }
   )
