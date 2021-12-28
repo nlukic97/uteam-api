@@ -65,7 +65,8 @@
     "format": "npx prettier --write ts",
     "seed": "tsc && node ./dist/seeders/Seeder.js",
     "createSeeder": "node ./dist/utils/SeederMaker.js",
-    "createModel": "node ./dist/utils/ModelMaker.js"
+    "createModel": "node ./dist/utils/ModelMaker.js",
+    "createController": "node ./dist/utils/ControllerMaker.js"
   },
   "repository": {
     "type": "git",
