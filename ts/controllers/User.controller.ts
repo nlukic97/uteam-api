@@ -27,10 +27,7 @@ const register: ReqRes = async (req, res) => {
     username: (req.body.username + '').toLowerCase(),
     email: (req.body.email + '').toLowerCase(),
     password: req.body.password + '',
-  }
-
-  console.log(data);
-  
+  }  
 
   // Trimming inputs
   data.username = validator.trim(data.username)
@@ -53,9 +50,6 @@ const register: ReqRes = async (req, res) => {
     password: hash
   }
 
-  
-
-
   const user = await User.build(insertData)
 
   user
@@ -75,15 +69,52 @@ const register: ReqRes = async (req, res) => {
     })
 }
 
-// const login: ReqRes = async (req, res)=>{
+const login: ReqRes = async (req, res)=>{
+  const name: string = validator.trim(req.body.name + '')
+  const password: string = validator.trim(req.body.password + '')
 
-// }
+  const key: string = (validator.isEmail(req.body.name)) ? 'email': 'username'
+
+  interface User {
+    id: number,
+    username: string,
+    email:string,
+    password:string,
+    createdAt: Date,
+    updatedAt: Date
+  }
+
+  // there is an error here on user according to typescript:
+  const user: User | null = await User.findOne({
+    where: {
+      [key]:name
+    }
+  })
+
+  if(user === null){
+    return res.status(404).json({message:`There is no user with this ${key}`})
+  }
+
+  const result: boolean = bcrypt.compareSync(password, user.password)
+  if(result === true){
+    return res.status(200).json({message:'You are logged in'})
+  } else {
+    return res.status(200).json({message:'Incorrect password.'})
+  }
+
+
+
+
+
+
+
+}
 
 //   method export
 const UserController = {
   getAllUsers,
   register,
-  // login
+  login
 }
 
 export default UserController
