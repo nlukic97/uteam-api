@@ -1,25 +1,39 @@
-import express from 'express';
-import createResponseData from './data';
+import express, { Application } from 'express'
+import bodyParser from 'body-parser'
 
-const app = express();
+//.env file support
+import dotenv from 'dotenv'
+dotenv.config()
 
-app.use(express.json()) 
+// database
+/* import db from './config/database'
 
-const port:number = 3000;
-const host:string = 'http://localhost'
+db.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.')
+  })
+  .catch(error => {
+    console.error('Unable to connect to the database:', error)
+  })  */
 
-let response = createResponseData({
-    status:200,
-    message:'OK'
-})
+/** ********* Initializing application ********* */
+const app: Application = express()
 
-// Wildcard - all get requests will return status 200 - OK. Will change later.
-app.get('*', (req, res) => {
-        
-    // res.end(responseData);
-    res.status(200).json(response);
-})
+// middleware
+app.use(bodyParser.urlencoded({ extended: false })) //what does this mean?
+app.use(express.json())
+
+// routing
+import routes from './routes/routes'
+/* import Seeder from './seeders/Seeder'
+
+Seeder() */
+
+app.use('/', routes)
+
+const port = process.env.PORT
+const host = 'http://localhost'
 
 app.listen(port, () => {
-    console.log(`The application is listening on ${host}:${port}`);    
+  console.log(`The application is listening on ${host}:${port}`)
 })
