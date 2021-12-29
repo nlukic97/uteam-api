@@ -7,10 +7,12 @@ const User = db.define(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique:true //user inserts with username that exists will be caught as an error (User.controller ---> method: register )
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique:true //user inserts with email that exists will be caught as an error (User.controller ---> method: register )
     },
     password: {
       type: DataTypes.STRING,

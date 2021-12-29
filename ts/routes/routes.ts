@@ -7,7 +7,8 @@ import UserController from '../controllers/User.controller'
 
 // User routes
 router.get('/getAllUsers', UserController.getAllUsers)
-router.post('/insertNewUser', UserController.insertNewUser)
+router.post('/register', UserController.register)
+// router.post('/login',UserController.login)
 
 // AppController routes
 router.get('*', AppController.wildcard)
