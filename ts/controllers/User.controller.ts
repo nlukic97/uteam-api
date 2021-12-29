@@ -15,30 +15,21 @@ const getAllUsers: ReqRes = async (req, res) => {
     .json({ message: `There are currently ${users.length} users.` })
 }
 
-/* interface dataInterface {
-  username: string
-  email: string
-  password: string
-} */
-
+/* --- User registration --- */
 const register: ReqRes = async (req, res) => {
-  // escaping inputs
+  // Trimming and sanitizing inputs
   const data = {
-    username: (req.body.username + '').toLowerCase(),
-    email: (req.body.email + '').toLowerCase(),
-    password: req.body.password + '',
+    username: validator.trim(req.body.username + '').toLowerCase(),
+    email: validator.trim(req.body.email + '').toLowerCase(),
+    password: validator.trim(req.body.password + '')
   }  
 
-  // Trimming inputs
-  data.username = validator.trim(data.username)
-  data.email = validator.trim(data.email)
-  data.password = validator.trim(data.password)
 
   if(!validator.isEmail(data.email)){
     return res.status(403).json({ message: 'Please make sure to enter valid email credentials.'})
 
   } else if (!/^[a-z0-9._]+$/.test(data.username)){ //username can contain letters, numbers, . and _
-    return res.status(403).json({ message: 'Please enter a valid username - only lowercase letters, numbers, dots (.) and underscores (_) are allowed.'})
+    return res.status(403).json({ message: 'Please enter a valid username - only lowercase letters, numbers, . and _ are allowed.'})
   }
 
   const salt = bcrypt.genSaltSync(10);
@@ -69,23 +60,22 @@ const register: ReqRes = async (req, res) => {
     })
 }
 
+/* --- User login --- */
 const login: ReqRes = async (req, res)=>{
-  const name: string = validator.trim(req.body.name + '')
+  const name: string = validator.trim(req.body.name + '').toLowerCase()
   const password: string = validator.trim(req.body.password + '')
 
   const key: string = (validator.isEmail(req.body.name)) ? 'email': 'username'
 
-  interface User {
+/*   interface User {
     id: number,
     username: string,
     email:string,
     password:string,
-    createdAt: Date,
-    updatedAt: Date
-  }
+  } */
 
-  // there is an error here on user according to typescript:
-  const user: User | null = await User.findOne({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user: any = await User.findOne({
     where: {
       [key]:name
     }
@@ -99,15 +89,8 @@ const login: ReqRes = async (req, res)=>{
   if(result === true){
     return res.status(200).json({message:'You are logged in'})
   } else {
-    return res.status(200).json({message:'Incorrect password.'})
+    return res.status(401).json({message:'Incorrect password.'})
   }
-
-
-
-
-
-
-
 }
 
 //   method export
