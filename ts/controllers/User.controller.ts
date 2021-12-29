@@ -8,6 +8,13 @@ interface ReqRes {
   (req: Request, res: Response): unknown
 }
 
+interface User {
+  name:string,
+  username:string,
+  email:string,
+  password:string
+}
+
 // methods
 const getAllUsers: ReqRes = async (req, res) => {
   const users = await User.findAll()
@@ -29,35 +36,7 @@ const register: ReqRes = async (req, res) => {
     username: validator.trim(req.body.username + '').toLowerCase(),
     email: validator.trim(req.body.email + '').toLowerCase(),
     password: validator.trim(req.body.password + '')
-  }
-
-  /** Checking if a user with the same email and/or username exists, and tailoring the error message */
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userExists:any = await User.findOne({
-    where:{
-      [Op.or]:[
-        {email:data.email},
-        {username:data.username},
-      ]
-    }
-    })
-
-  if(userExists){
-    const match = [];
-    
-    if(userExists.email === data.email){
-      match.push('email')
-    }
-
-    if(userExists.username === data.username){
-      match.push('userame')
-    }
-
-    const foundMsg = (match.length === 2) ? 'username and email have' : `${match[0]} has`
-    return res.status(403).json({message:`The ${foundMsg} already been taken.`})
-  }
-  
+  } 
 
   if(!validator.isEmail(data.email)){
     return res.status(403).json({ message: 'Please make sure to enter valid email credentials.'})
@@ -70,6 +49,31 @@ const register: ReqRes = async (req, res) => {
 
   } else if(data.password.length < 6){
     return res.status(403).json({ message: 'Your password should be at least 6 characters long.'})
+  }
+
+  /** Checking if a user with the same email and/or username exists, and tailoring the error message */
+  const userExists:unknown = await User.findOne({
+    where:{
+      [Op.or]:[
+        {email:data.email},
+        {username:data.username},
+      ]
+    }
+    })
+
+  if(userExists){
+    const match = [];
+    
+    if((userExists as User).email === data.email){
+      match.push('email')
+    }
+
+    if((userExists as User).username === data.username){
+      match.push('userame')
+    }
+
+    const foundMsg = (match.length === 2) ? 'username and email have' : `${match[0]} has`
+    return res.status(403).json({message:`The ${foundMsg} already been taken.`})
   }
 
   const salt = bcrypt.genSaltSync(10);
@@ -116,8 +120,7 @@ const login: ReqRes = async (req, res)=>{
   // determining if the user submitted an email or a username (used to find the user in the db to compare the login credentials against)
   const key: string = (validator.isEmail(req.body.name)) ? 'email': 'username'
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const user: any = await User.findOne({
+  const user: unknown = await User.findOne({
     where: {
       [key]:name
     }
@@ -128,7 +131,7 @@ const login: ReqRes = async (req, res)=>{
   }
 
   // comparing the submitted password with the user password in the db
-  const result: boolean = bcrypt.compareSync(password, user.password)
+  const result: boolean = bcrypt.compareSync(password, (user as User).password)
   if(result === true){
     return res.status(200).json({message:'You are logged in'})
   } else {
