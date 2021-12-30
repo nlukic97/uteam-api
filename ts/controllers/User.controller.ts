@@ -1,8 +1,9 @@
 import User from '../models/User'
 import { Request, Response } from 'express'
 import validator from 'validator'
-import * as bcrypt from 'bcryptjs';
-import {Op} from 'sequelize';
+import * as bcrypt from 'bcryptjs'
+import {Op} from 'sequelize'
+import jwt from 'jsonwebtoken'
 
 interface ReqRes {
   (req: Request, res: Response): unknown
@@ -86,11 +87,12 @@ const register: ReqRes = async (req, res) => {
   }
 
   const user = await User.build(insertData)
-
+  
   user
-    .save()
-    .then(() => {
-      res.status(200).json({ message: 'User saved saved to the database!' })
+  .save()
+  .then(() => {
+      const accessToken = jwt.sign({username: data.username}, process.env.ACCESS_TOKEN_SECRET as string)
+      res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
     })
     // An error will be caught if the email or username have already been used
     .catch((foundErrors) => {
@@ -133,7 +135,8 @@ const login: ReqRes = async (req, res)=>{
   // comparing the submitted password with the user password in the db
   const result: boolean = bcrypt.compareSync(password, (user as User).password)
   if(result === true){
-    return res.status(200).json({message:'You are logged in'})
+    const accessToken = jwt.sign({username: (user as User).username}, process.env.ACCESS_TOKEN_SECRET as string)
+    return res.status(200).json({message:'You are logged in', accessToken: accessToken})
   } else {
     return res.status(401).json({message:'Incorrect password.'})
   }
