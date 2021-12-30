@@ -9,13 +9,6 @@ interface ReqRes {
   (req: Request, res: Response): unknown
 }
 
-interface User {
-  name:string,
-  username:string,
-  email:string,
-  password:string
-}
-
 // methods
 const getAllUsers: ReqRes = async (req, res) => {
   const users = await User.findAll()
@@ -53,7 +46,7 @@ const register: ReqRes = async (req, res) => {
   }
 
   /** Checking if a user with the same email and/or username exists, and tailoring the error message */
-  const userExists:unknown = await User.findOne({
+  const userExists = await User.findOne({
     where:{
       [Op.or]:[
         {email:data.email},
@@ -65,11 +58,11 @@ const register: ReqRes = async (req, res) => {
   if(userExists){
     const match = [];
     
-    if((userExists as User).email === data.email){
+    if(userExists.email === data.email){
       match.push('email')
     }
 
-    if((userExists as User).username === data.username){
+    if(userExists.username === data.username){
       match.push('userame')
     }
 
@@ -81,7 +74,7 @@ const register: ReqRes = async (req, res) => {
   const hash = bcrypt.hashSync(data.password, salt);
 
   const insertData = {
-    email: validator.normalizeEmail(data.email),
+    email: data.email,
     username: data.username,
     password: hash
   }
@@ -122,7 +115,7 @@ const login: ReqRes = async (req, res)=>{
   // determining if the user submitted an email or a username (used to find the user in the db to compare the login credentials against)
   const key: string = (validator.isEmail(req.body.name)) ? 'email': 'username'
 
-  const user: unknown = await User.findOne({
+  const user = await User.findOne({
     where: {
       [key]:name
     }
@@ -133,9 +126,10 @@ const login: ReqRes = async (req, res)=>{
   }
 
   // comparing the submitted password with the user password in the db
-  const result: boolean = bcrypt.compareSync(password, (user as User).password)
+  const result: boolean = bcrypt.compareSync(password, user.password)
   if(result === true){
-    const accessToken = jwt.sign({username: (user as User).username}, process.env.ACCESS_TOKEN_SECRET as string)
+    
+    const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET as string)
     return res.status(200).json({message:'You are logged in', accessToken: accessToken})
   } else {
     return res.status(401).json({message:'Incorrect password.'})

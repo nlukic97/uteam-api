@@ -1,9 +1,30 @@
-import { DataTypes } from 'sequelize'
+import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
 
-const User = db.define(
+interface UserAttributes {
+  id?: number, 
+  username: string,
+  email: string, 
+  password: string,
+  createdAt?: string,
+  updatedAt?: string,
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+
+interface UserInstance extends Model<UserAttributes, UserCreationAttributes>,
+    UserAttributes {}
+
+const User =
+db.define<UserInstance>(
   'User',
   {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -17,13 +38,12 @@ const User = db.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
+    }
   },
   {
-    // freezeTableName: true, //means that the table for a User model must be named 'User'
-    tableName: 'users', //providing table name directly
+    tableName: 'users'
   }
-)
+);
 
 User.sync({ force: false })
 
