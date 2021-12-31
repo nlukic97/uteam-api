@@ -32,18 +32,12 @@ const register: ReqRes = async (req, res) => {
     password: validator.trim(req.body.password + '')
   } 
 
-  if(!validator.isEmail(data.email)){
-    return res.status(403).json({ message: 'Please make sure to enter valid email credentials.'})
+  // validation
+  if(!validator.isEmail(data.email)) return res.status(403).json({ message: 'Please make sure to enter valid email credentials.'})
+  if (!/^[a-z0-9._]+$/.test(data.username)) return res.status(403).json({ message: 'Please enter a valid username - only lowercase letters, numbers, . and _ are allowed.'})
+  if(data.username.length < 3) return res.status(403).json({ message: 'Your username must contain at least 3 characters.'})
+  if(data.password.length < 6) return res.status(403).json({ message: 'Your password should be at least 6 characters long.'})
 
-  } else if (!/^[a-z0-9._]+$/.test(data.username)){ //username can contain letters, numbers, . and _
-    return res.status(403).json({ message: 'Please enter a valid username - only lowercase letters, numbers, . and _ are allowed.'})
-  
-  } else if(data.username.length < 3){
-    return res.status(403).json({ message: 'Your username must contain at least 3 characters.'})
-
-  } else if(data.password.length < 6){
-    return res.status(403).json({ message: 'Your password should be at least 6 characters long.'})
-  }
 
   /** Checking if a user with the same email and/or username exists, and tailoring the error message */
   const userExists = await User.findOne({
@@ -58,13 +52,8 @@ const register: ReqRes = async (req, res) => {
   if(userExists){
     const match = [];
     
-    if(userExists.email === data.email){
-      match.push('email')
-    }
-
-    if(userExists.username === data.username){
-      match.push('userame')
-    }
+    if(userExists.email === data.email) match.push('email')
+    if(userExists.username === data.username) match.push('userame')
 
     const foundMsg = (match.length === 2) ? 'username and email have' : `${match[0]} has`
     return res.status(403).json({message:`The ${foundMsg} already been taken.`})
@@ -84,7 +73,7 @@ const register: ReqRes = async (req, res) => {
   user
   .save()
   .then(() => {
-      const accessToken = jwt.sign({username: data.username}, process.env.ACCESS_TOKEN_SECRET as string)
+      const accessToken = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET as string)
       res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
     })
     // An error will be caught if the email or username have already been used
@@ -129,7 +118,7 @@ const login: ReqRes = async (req, res)=>{
   const result: boolean = bcrypt.compareSync(password, user.password)
   if(result === true){
     
-    const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET as string)
+    const accessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET as string)
     return res.status(200).json({message:'You are logged in', accessToken: accessToken})
   } else {
     return res.status(401).json({message:'Incorrect password.'})

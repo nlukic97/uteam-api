@@ -2,7 +2,13 @@
 import {Request, Response, NextFunction as Next } from 'express';
 import jwt from 'jsonwebtoken'
 
-const authenticateToken = (req: Request, res: Response, next: Next) =>{
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface RequestExtra extends Request {
+  user: jwt.JwtPayload | undefined; //adding this removes the error at line 25. But causes a 'no overload matches this call' error in routes.ts
+}
+
+const authenticateToken = (req: RequestExtra, res: Response, next: Next) =>{
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader?.split(' ')[1]
     if(token === null) {
@@ -13,12 +19,8 @@ const authenticateToken = (req: Request, res: Response, next: Next) =>{
       if(err) {
         return res.sendStatus(403)
       }
-
-      console.log('here is user',user);
-      
   
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (req as any).user = user
+      req.user = user
       next()
     })
   
