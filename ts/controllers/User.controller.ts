@@ -2,7 +2,7 @@ import User from '../models/User'
 import { Request, Response } from 'express'
 import validator from 'validator'
 import * as bcrypt from 'bcryptjs'
-import {Op} from 'sequelize'
+import { Op } from 'sequelize'
 import jwt from 'jsonwebtoken'
 
 interface ReqRes {
@@ -10,6 +10,7 @@ interface ReqRes {
 }
 
 // methods
+/* --- Getting the number of users */
 const getAllUsers: ReqRes = async (req, res) => {
   const users = await User.findAll()
   res
@@ -23,7 +24,6 @@ const register: ReqRes = async (req, res) => {
   if(!keys.includes('username') || !keys.includes('email') || !keys.includes('password')){
     return res.status(403).json({message:'You must submit an email, username, and password.'})
   }
-
 
   // Trimming and sanitizing inputs
   const data = {
@@ -73,7 +73,7 @@ const register: ReqRes = async (req, res) => {
   user
   .save()
   .then(() => {
-      const accessToken = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET as string)
+      const accessToken:string = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
       res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
     })
     // An error will be caught if the email or username have already been used
@@ -92,7 +92,7 @@ const register: ReqRes = async (req, res) => {
 const login: ReqRes = async (req, res)=>{
 
   // Making sure the 
-  const keys = Object.keys(req.body)
+  const keys:Array<string|null> = Object.keys(req.body)
   if(!keys.includes('name') || !keys.includes('password')){
     return res.status(403).json({message:'You must submit an email / username, and password.'})
   }
@@ -118,7 +118,7 @@ const login: ReqRes = async (req, res)=>{
   const result: boolean = bcrypt.compareSync(password, user.password)
   if(result === true){
     
-    const accessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET as string)
+    const accessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
     return res.status(200).json({message:'You are logged in', accessToken: accessToken})
   } else {
     return res.status(401).json({message:'Incorrect password.'})
