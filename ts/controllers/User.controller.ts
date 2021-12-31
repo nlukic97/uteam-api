@@ -73,7 +73,7 @@ const register: ReqRes = async (req, res) => {
   user
   .save()
   .then(() => {
-      const accessToken:string = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
+      const accessToken:string | undefined = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
       res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
     })
     // An error will be caught if the email or username have already been used
