@@ -3,9 +3,10 @@ import db from '../config/database'
 
 interface ProfileAttributes {
   id?: number,
-  status:'pending'|'published', 
+  status?:'pending'|'published', 
   name: string,
   profilePhoto: string,
+  user?:number,
   createdAt?: string,
   updatedAt?: string,
 }
@@ -27,7 +28,8 @@ db.define<ProfileInstance>(
     },
     status:{
         type: DataTypes.ENUM('pending','published'),
-        allowNull:false
+        allowNull:false,
+        defaultValue:"pending"
     },
     name: {
       type: DataTypes.STRING,
@@ -44,6 +46,6 @@ db.define<ProfileInstance>(
 );
 
 
-// Profile.sync({ force: true })
 
+// Profile.sync({ force: false })
 export default Profile

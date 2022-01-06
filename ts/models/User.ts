@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
-import Profile from './Profile'
+import Profile from './Profile';
 
 interface UserAttributes {
   id?: number, 
@@ -47,7 +47,10 @@ db.define<UserInstance>(
 );
 
 
-User.hasOne(Profile)
-// User.sync({ force: true })
+/** Associations  */
+User.hasOne(Profile,{foreignKey:'user'})
+Profile.belongsTo(User,{foreignKey:'user'}) //If I do not define foreign key for 'Profile.belongsTo', I will have a column 'UserId' added.
 
+
+// User.sync({ force: false })
 export default User

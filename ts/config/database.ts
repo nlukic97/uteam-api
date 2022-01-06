@@ -10,6 +10,6 @@ const sequaleze = new Sequelize(
   }
 )
 
-sequaleze.sync({ force: true }) //uncommented this because the auto seeder didn't work with it
+sequaleze.sync({ force: false }) //uncommented this because the auto seeder didn't work with it
 
 export default sequaleze
