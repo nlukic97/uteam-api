@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
+import Profile from './Profile'
 
 interface UserAttributes {
   id?: number, 
@@ -45,6 +46,8 @@ db.define<UserInstance>(
   }
 );
 
-User.sync({ force: false })
+
+User.hasOne(Profile)
+// User.sync({ force: true })
 
 export default User
