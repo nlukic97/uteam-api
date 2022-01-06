@@ -37,7 +37,7 @@ const register: ReqRes = async (req, res) => {
 
   // Trimming and sanitizing inputs
   const data = {
-    username: validator.trim(sentData.username + '').toLowerCase(),
+    username: validator.trim(sentData.username + ''),
     email: validator.trim(sentData.email + '').toLowerCase(),
     password: validator.trim(sentData.password + '')
   } 
@@ -50,15 +50,15 @@ const register: ReqRes = async (req, res) => {
   if(!validator.isEmail(data.email)){
     return res.status(403).json({ message: 'Please make sure to enter valid email credentials.'})
   }
-
-  // password format check
-  if (!/^[a-z0-9#%-_*]+$/.test(data.username)){
-    return res.status(403).json({ message: 'Please enter a valid username - only lowercase letters, numbers, . and _ are allowed.'})
-  }
-
+  
   // username length check
   if(data.username.length < 3){
     return res.status(403).json({ message: 'Your username must contain at least 3 characters.'})
+  }
+
+  // username format check - first char must be a letter(capital or lowercase), others can be: letters(capital or lowercase) or these symbols: #%_*-)
+  if (! /^[A-Za-z][A-Za-z0-9#%_*-]+$/.test(data.username)){
+    return res.status(403).json({ message: 'Username must start with a letter of any case, and may contain letters of any case and the following symbols: #%_-*'})
   }
 
   //password length check
