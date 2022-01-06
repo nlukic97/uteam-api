@@ -12,6 +12,8 @@ import AppController from '../controllers/App.controller'
 router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
 router.post('/profiles', ProfileController.insertNewProfile)
+router.put('/profiles/:id', ProfileController.updateProfile)
+// router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
 router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //using the auth middleware
