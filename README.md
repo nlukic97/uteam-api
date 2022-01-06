@@ -10,7 +10,7 @@
 
 | Endpoint       | Type | Description                                             |
 | -------------- | ---- | ------------------------------------------------------- |
-| `/getAllUsers` | GET  | Returns the number of rows in the `users` table.        |
+| `/countAllUsers` | GET  | Returns the number of rows in the `users` table.        |
 | `/* `          | GET  | Wildcard route. Returns an object containing a message. |
 
 ### POST Routes

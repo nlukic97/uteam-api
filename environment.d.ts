@@ -13,7 +13,14 @@ declare global {
       DB_USER: string
       DB_PASS: string
       DB_HOST: string
-      DB_DIALECT: Dialect | undefined
+      DB_DIALECT: Dialect | undefined,
+      ACCESS_TOKEN_SECRET: string
+    }
+  }
+
+  namespace Express {
+    interface Request {
+      user: JwtPayload | undefined //source: https://stackoverflow.com/questions/64520849/express-jwt-middleware-typescript-types-issue
     }
   }
 }
