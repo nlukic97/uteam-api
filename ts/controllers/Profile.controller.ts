@@ -122,20 +122,31 @@ const updateProfile = async (req: Request, res: Response) => {
     }
     if(submitData.user && (Number.isInteger(submitData.user) === false)){        
         return res.status(401).json({message:'Please make sure the name, profilePhoto, and / or user are of the correct type.'})
-
     }
     
-    // check if user of a certain id exists. If yes, create the profile with this user id. If no, throw an error.
+    // Check if user of a certain id exists, and if the profile exists. 
+    // If yes, create the profile with this user id. If no, throw an error.
     try {
+        // checking if the profile exists
+        const profileExists = await Profile.findOne({where:{
+            id: req.params.id
+        }}).catch(e=>{
+            throw e
+        })
+
+        if(profileExists === null){
+            throw `A profile with the id ${req.params.id} does not exist and cannot be assigned to this profile.`;
+        }
+
         // checking if this user exists
         const userExists = await User.findOne({where:{
-            id: req.params.id
+            id: submitData.user
         }}).catch(e=>{
             throw e
         })
         
         if(userExists === null){
-            throw `A user with the id ${req.params.id} does not exist and cannot be assigned to this profile.`;
+            throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
         }
         
         // constructing the profile
@@ -145,7 +156,7 @@ const updateProfile = async (req: Request, res: Response) => {
             }
         }).catch(err=>{
             throw err
-        })
+        })        
         
         if(profileUpdate){
             return res.status(200).json({message:'Profile with id '+ req.params.id + ' updated successfully.'})
@@ -160,7 +171,7 @@ const updateProfile = async (req: Request, res: Response) => {
 
 
 // Delete a profile with by the supplied :id parameter
-const deleteProfile = async (req: Request, res: Response) => {
+const deleteProfile = async (req: Request, res: Response) => {    
     if(!req.params.id || Number.isInteger(+req.params.id) === false){
         return res.status(301).json({message:'Please make sure that the url parameter \'id\' is an integer.'});
     }
@@ -169,8 +180,7 @@ const deleteProfile = async (req: Request, res: Response) => {
         const profileDelete = await Profile.destroy({
             where:{
                 id: req.params.id
-            },
-            truncate:false
+            }
         })
         
         if(profileDelete){
