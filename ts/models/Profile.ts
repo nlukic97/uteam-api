@@ -4,8 +4,8 @@ import db from '../config/database'
 interface ProfileAttributes {
   id?: number,
   status?:'pending'|'published', 
-  name: string,
-  profilePhoto: string,
+  name?: string,
+  profilePhoto?: string,
   user?:number,
   createdAt?: string,
   updatedAt?: string,

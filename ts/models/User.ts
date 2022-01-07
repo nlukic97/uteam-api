@@ -48,8 +48,10 @@ db.define<UserInstance>(
 
 
 /** Associations  */
-User.hasOne(Profile,{foreignKey:'user'})
-Profile.belongsTo(User,{foreignKey:'user'}) //If I do not define foreign key for 'Profile.belongsTo', I will have a column 'UserId' added.
+//If I do not define foreign key for 'Profile.belongsTo', I will have a column 'UserId' added.
+// Also, had to disable the constrainsts (on delete and on update) so that a PUT request to profile wouldn't throw a constraint error
+User.hasOne(Profile,{foreignKey:'user',constraints:false})
+Profile.belongsTo(User,{foreignKey:'user',constraints:false})
 
 
 // User.sync({ force: false })

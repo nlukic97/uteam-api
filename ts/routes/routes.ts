@@ -13,12 +13,12 @@ router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
 router.post('/profiles', ProfileController.insertNewProfile)
 router.put('/profiles/:id', ProfileController.updateProfile)
-// router.delete('/profiles/:id', ProfileController.deleteProfile)
+router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
 router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //using the auth middleware
 router.post('/register', UserController.register)
-router.post('/login',UserController.login)
+router.post('/login', UserController.login)
 
 // AppController routes
 router.get('*', AppController.wildcard)

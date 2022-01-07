@@ -12,12 +12,28 @@
 | -------------- | ---- | ------------------------------------------------------- |
 | `/countAllUsers` | GET  | Returns the number of rows in the `users` table.        |
 | `/* `          | GET  | Wildcard route. Returns an object containing a message. |
+| `/profiles `   | GET  | Returns a list of profiles (limit set to 20). |
+| `/profiles/{id}`| GET  | Returns a profile by {id} url parameter. |
 
 ### POST Routes
 
 | Endpoint         | Type | Expected request body                                       | Description                                      |
 | ---------------- | ---- | ----------------------------------------------------------- | ------------------------------------------------ |
-| `/insertNewUser` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table. |
+| `/register` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table. |
+| `/profiles` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `profiles` table. |
+| `/login` | POST | { `name`: string, `password`: string} | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user. |
+
+### PUT Routes
+
+| Endpoint         | Type | Expected request body                                       | Description                                      |
+| ---------------- | ---- | ----------------------------------------------------------- | ------------------------------------------------ |
+| `/profiles/{id}` | PUT | { `username`?: string, `email`?: string, `password`?: string } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table. |
+
+### DELETE Routes
+
+| Endpoint         | Type | Expected request body                                       | Description                                      |
+| ---------------- | ---- | ----------------------------------------------------------- | ------------------------------------------------ |
+| `/profiles/{id}` | DELETE | / | Used to delete a row in the `profiles` table based on the supplied {id} url parameter. |
 
 ---
 
