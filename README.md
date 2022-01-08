@@ -10,7 +10,7 @@
 
 | Endpoint       | Type | Description                                             |
 | -------------- | ---- | ------------------------------------------------------- |
-| `/countAllUsers` | GET  | Returns the number of rows in the `users` table.        |
+| `/countAllUsers` | GET  | Returns the number of rows in the `users` table. Authentication bearer token is required for this route. |
 | `/* `          | GET  | Wildcard route. Returns an object containing a message. |
 | `/profiles `   | GET  | Returns a list of profiles (limit set to 20). |
 | `/profiles/{id}`| GET  | Returns a profile by {id} url parameter. |

@@ -23,4 +23,10 @@ router.post('/login', UserController.login)
 // AppController routes
 router.get('*', AppController.wildcard)
 
+// 404 errors for POST, PUT, and DELETE - Keep these routes at the bottom of this router page
+router.post('*',(_,res)=> res.sendStatus(404))
+router.put('*',(_,res)=> res.sendStatus(404))
+router.delete('*',(_,res)=> res.sendStatus(404))
+router.patch('*',(_,res)=> res.sendStatus(404))
+
 export default router

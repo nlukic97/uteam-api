@@ -58,10 +58,15 @@ const insertNewProfile = async (req: Request, res: Response) => {
         const userExists = await User.findOne({where:{
             id: submitData.user
         }})
-        
-        if(userExists === null){
-            throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
-        }
+        if(userExists === null) throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
+
+
+        // Checking if a profile with a certain name exists
+        const profileExists = await Profile.findOne({where:{
+            name: submitData.name
+        }})
+        if(profileExists) throw 'A profile with this name already exists. Please enter another name.'
+
         
         // constructing the profile
         const profile = await Profile.build(submitData)
@@ -183,7 +188,7 @@ const deleteProfile = async (req: Request, res: Response) => {
         if(profileDelete){
             return res.status(200).json({message:'Profile with id '+ req.params.id + ' has been deleted.'})
         } else {
-            throw 'Unable to delete profile. It is either deleted, or something went wrong.'
+            throw 'Unable to delete profile - it has not been found.'
         }
     } catch(err){
         return res.status(400).json({message: err})
