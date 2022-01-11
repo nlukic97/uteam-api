@@ -69,9 +69,7 @@ const insertNewProfile = async (req: Request, res: Response) => {
 
         
         // constructing the profile
-        const profile = await Profile.build(submitData)
-        
-        profile.save().then(()=>{
+        Profile.create(submitData).then((profile)=>{
             return res.status(200).json({message:'Profile with id ' + profile.id + ' created successfully.'})
         }).catch(err=>{
             throw err
