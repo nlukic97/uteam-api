@@ -95,22 +95,24 @@ const register: ReqRes = async (req, res) => {
     username: data.username,
     password: hash
   }
-
-  const user = await User.build(insertData)
   
-  user
-  .save()
-  .then(() => {
-      const accessToken:string | undefined = jwt.sign({username: data.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
+  User.create(insertData)
+  .then((user) => {    
+      const accessToken:string | undefined = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
       res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
     })
-    // An error will be caught if the email or username have already been used
+    // An error will be caught if the email or username have already been used - just as a failsafe
     .catch((foundErrors) => {
+      console.log(foundErrors);
+            
       const errorMessages: Array<object> = []
 
       foundErrors.errors.forEach((err: { message: object; }) => {        
         errorMessages.push({message: err.message})
       });
+
+      console.log(errorMessages);
+      
 
       res.status(403).json(errorMessages)
     })

@@ -5,16 +5,8 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 dotenv.config()
 
-// database
-/* import db from './config/database'
-
-db.authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.')
-  })
-  .catch(error => {
-    console.error('Unable to connect to the database:', error)
-  })  */
+// Making sure that there is an access token in the .env folder. If there is not, the application may crash during user registration
+if(!process.env.ACCESS_TOKEN_SECRET) throw new Error('Your .env variable "ACCESS_TOKEN_SECRET" is empty - please follow the README instructions in order to add it.')
 
 /** ********* Initializing application ********* */
 const app: Application = express()
@@ -25,9 +17,6 @@ app.use(express.json())
 
 // routing
 import routes from './routes/routes'
-/* import Seeder from './seeders/Seeder'
-
-Seeder() */
 
 app.use('/', routes)
 
