@@ -48,7 +48,7 @@ db.define<UserInstance>(
 
 
 /** Associations  */
-User.hasOne(Profile,{foreignKey:'user',constraints:true})
+User.hasOne(Profile,{foreignKey:'user',constraints:true, onDelete:'cascade'}) // cascade - deleting a user will delete a profile
 Profile.belongsTo(User,{foreignKey:'user',constraints:true})
 
 
