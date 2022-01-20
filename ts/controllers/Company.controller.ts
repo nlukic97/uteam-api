@@ -81,7 +81,7 @@ const updateCompany = async (req:Request, res:Response)=>{
     const submitData:{
         name?:string|undefined,
         logo?:string|undefined,
-        slug?:string|undefined
+        slug?:string|undefined //added later to this object based on the submitted name
     } = {}
     
     /** Validation of submitted data - checking if any data has been submitted. */

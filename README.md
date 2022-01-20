@@ -11,9 +11,10 @@
 | Endpoint         | Type | Description                                                                                              |
 | ---------------- | ---- | -------------------------------------------------------------------------------------------------------- |
 | `/countAllUsers` | GET  | Returns the number of rows in the `users` table. Authentication bearer token is required for this route. |
-| `/* `            | GET  | Wildcard route. Returns an object containing a message.                                                  |
 | `/profiles `     | GET  | Returns a list of profiles (limit set to 20).                                                            |
 | `/profiles/{id}` | GET  | Returns a profile by {id} url parameter.                                                                 |
+| `/companies` | GET  | Returns a list of companies (limit set to 20)parameter.                                                                 |
+| `/companies/{id}` | GET  | Returns a company by {id} url parameter.                                                                 |
 
 ### POST Routes
 
@@ -22,18 +23,21 @@
 | `/register` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table.                                                                             |
 | `/profiles` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `profiles` table.                                                                          |
 | `/login`    | POST | { `name`: string, `password`: string}                       | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user. |
+| `/companies` | POST | { `logo`: string, `name`: string} | Used to insert a new row into the `companies` table.                                                                          |
 
 ### PUT Routes
 
 | Endpoint         | Type | Expected request body                                          | Description                                                                                          |
 | ---------------- | ---- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `/profiles/{id}` | PUT  | { `username`?: string, `email`?: string, `password`?: string } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table. |
+| `/companies/{id}` | PUT  | { `logo`?: string, `name`?: string} | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `companies` table. |
 
 ### DELETE Routes
 
 | Endpoint         | Type   | Expected request body | Description                                                                            |
 | ---------------- | ------ | --------------------- | -------------------------------------------------------------------------------------- |
 | `/profiles/{id}` | DELETE | /                     | Used to delete a row in the `profiles` table based on the supplied {id} url parameter. |
+| `/companies/{id}` | DELETE | /                     | Used to delete a row in the `companies` table based on the supplied {id} url parameter. |
 
 ---
 
@@ -87,13 +91,32 @@ You also might need to leave the PORT variable in `.env` empty when deploying th
 
 ## Models
 
-- User
+### User
+  - id
   - username
   - email
   - password
+  - role ---> `'company-user'`|`'company-admin'`|`'superadmin'` (default: superadmin).
 
-- Profiles
-    - status
-    - name
-    - profilePhoto
-    - user
+### Profile 
+  - id
+  - status ---> `'pending'`|`'published'` (default: pending).
+  - name
+  - profilePhoto
+  - user ---> `foreignKey`
+  - company ---> `foreignKey`
+
+### Company 
+  - id
+  - logo
+  - name
+  - slug
+
+---
+
+## Associations
+- `User` to `Profile` = One to One
+- `Profile` to `Company` = One to Many _(one Company has many Profiles, one Profile belongs to one Company)_
+
+Note:
+- _one company could have many users (and likewise, one user could belong one company) `through` the Profile table - still not implemented._

@@ -23,8 +23,7 @@ const register: ReqRes = async (req, res) => {
   const sentData:{
     username:string;
     email:string,
-    password:string,
-    role?:string //should this be optional or no ? No further validation has been done for the role
+    password:string
   }  = req.body
 
   // making sure all necessary data is there
