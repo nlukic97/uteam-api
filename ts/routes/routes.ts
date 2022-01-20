@@ -4,9 +4,10 @@ const router = express.Router()
 import AuthMiddleware from '../middleware/Authenticate'
 
 /** Controller imports */
+import AppController from '../controllers/App.controller'
 import ProfileController from '../controllers/Profile.controller'
 import UserController from '../controllers/User.controller'
-import AppController from '../controllers/App.controller'
+import CompanyController from '../controllers/Company.controller'
 
 // Profile routes
 router.get('/profiles', ProfileController.getProfiles)
@@ -20,10 +21,15 @@ router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //usi
 router.post('/register', UserController.register)
 router.post('/login', UserController.login)
 
-// AppController routes
-router.get('*', AppController.wildcard)
+// Company routes
+router.get('/companies',CompanyController.getCompanies)
+router.post('/companies',CompanyController.insertNewCompany)
+router.get('/companies/:id',CompanyController.getCompanyById)
+router.put('/companies/:id',CompanyController.updateCompany)
+router.delete('/companies/:id',CompanyController.deleteCompany)
 
 // 404 errors for POST, PUT, and DELETE - Keep these routes at the bottom of this router page
+router.get('*', AppController.wildcard) // AppController routes
 router.post('*',(_,res)=> res.sendStatus(404))
 router.put('*',(_,res)=> res.sendStatus(404))
 router.delete('*',(_,res)=> res.sendStatus(404))

@@ -20,7 +20,12 @@ const countAllUsers: ReqRes = async (req, res) => {
 
 /* --- User registration --- */
 const register: ReqRes = async (req, res) => {
-  const sentData:{username:string;email:string,password:string}  = req.body
+  const sentData:{
+    username:string;
+    email:string,
+    password:string,
+    role?:string //should this be optional or no ? No further validation has been done for the role
+  }  = req.body
 
   // making sure all necessary data is there
   if(!sentData.username || !sentData.email || !sentData.password){

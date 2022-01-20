@@ -113,20 +113,7 @@ const updateProfile = async (req: Request, res: Response) => {
     || (submitData.user && (Number.isInteger(+submitData.user) === false))
     ) {
         return res.status(400).json({message:'Please make sure the name, profilePhoto, and / or user are of the correct type.'})
-    }
-
-    /* if(submitData.name && typeof(submitData.name) !== 'string'){
-        return res.status(400).json({message:'Please make sure the name, profilePhoto, and / or user are of the correct type.'})
-        
-    }
-    if(submitData.profilePhoto && typeof(submitData.profilePhoto) !== 'string'){
-        return res.status(400).json({message:'Please make sure the name, profilePhoto, and / or user are of the correct type.'})
-        
-    }
-    if(submitData.user && (Number.isInteger(+submitData.user) === false)){       
-        return res.status(400).json({message:'Please make sure the name, profilePhoto, and / or user are of the correct type.'})
-    } */
-    
+    }    
 
     // Check if user and / or profile exist
     try {

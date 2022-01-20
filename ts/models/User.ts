@@ -5,6 +5,7 @@ import Profile from './Profile';
 interface UserAttributes {
   id?: number, 
   username: string,
+  role?:'company-user'|'company-admin'|'superadmin', //optional since we have a default value for enum
   email: string, 
   password: string,
   createdAt?: string,
@@ -30,6 +31,11 @@ db.define<UserInstance>(
       type: DataTypes.STRING,
       allowNull: false,
       unique:true //user inserts with username that exists will be caught as an error (User.controller ---> method: register )
+    },
+    role: {
+      type: DataTypes.ENUM('company-user','company-admin','superadmin'),
+      allowNull: false,
+      defaultValue:'company-user' // if role is an optional parameter,
     },
     email: {
       type: DataTypes.STRING,
