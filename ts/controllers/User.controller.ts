@@ -26,15 +26,15 @@ const register: ReqRes = async (req, res) => {
     password:string
   }  = req.body
 
-  // making sure all necessary data is there
+  // making sure all necessary data is there (null, undefined and '' will not pass this check) 
   if(!sentData.username || !sentData.email || !sentData.password){
     return res.status(400).json({message:'Username, email, and / or password is / are missing.'})
   }
 
-  // Checking if it is a non empty string
-  if(typeof(sentData.username) !== 'string' || sentData.username === ''
-    || typeof(sentData.email) !== 'string' || sentData.email === ''
-    || typeof(sentData.password) !== 'string' || sentData.password === ''
+  // Checking if it is a string
+  if(typeof(sentData.username) !== 'string'
+    || typeof(sentData.email) !== 'string'
+    || typeof(sentData.password) !== 'string'
   ){
     return res.status(400).json({message:'Please make sure you submited the username, email, and password in the correct format (a non empty string).'})
   }
@@ -46,9 +46,7 @@ const register: ReqRes = async (req, res) => {
     password: validator.trim(sentData.password + '')
   } 
 
-  /** 
-   * Validation 
-   * */
+  /** * Validation */
 
   // email check
   if(!validator.isEmail(data.email)){
@@ -126,14 +124,14 @@ const register: ReqRes = async (req, res) => {
 const login: ReqRes = async (req, res)=>{
   const sentData:{name:string;password:string} = req.body
   
-  // making sure all necessary data is there
+  // making sure all necessary data is there (null, undefined and '' will not pass this check) 
   if(!sentData.name || !sentData.password) {
     return res.status(400).json({message:'Please make sure you submitted all the necessary credentials (username or email, and password).'})
   }
 
-  // Checking if it is a non empty string
-  if(typeof(sentData.name) !== 'string' || sentData.name === ''
-  || typeof(sentData.password) !== 'string' || sentData.password === ''
+  // Checking if it is a string
+  if(typeof(sentData.name) !== 'string'
+  || typeof(sentData.password) !== 'string'
   ){
     return res.status(400).json({message:'Please make sure you submited the username/email and password in the correct format (a non empty string).'})
   }
