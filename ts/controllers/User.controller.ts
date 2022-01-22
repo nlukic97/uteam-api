@@ -41,9 +41,9 @@ const register: ReqRes = async (req, res) => {
 
   // Trimming and sanitizing inputs
   const data = {
-    username: validator.trim(sentData.username + ''),
-    email: validator.trim(sentData.email + '').toLowerCase(),
-    password: validator.trim(sentData.password + '')
+    username: (sentData.username + '').trim(),
+    email: (sentData.email + '').toLowerCase().trim(),
+    password: (sentData.password + '').trim()
   } 
 
   /** * Validation */

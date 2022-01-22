@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
-import validator from 'validator'
 
 import Profile from '../models/Profile'
 import User from '../models/User'
 import Company from '../models/Company'
+
+// import { insertUserValidation } from '../validation_logic/User.validation' // currently not implemented, only testing
 
 // Getting all profiles with a limit of 20
 const getProfiles = async (req: Request, res: Response) => {
@@ -42,7 +43,16 @@ const insertNewProfile = async (req: Request, res: Response) => {
         profilePhoto: req.body.profilePhoto,
         user: req.body.user,
         company:req.body.company
-    }   
+    }
+
+    ///////////////////  Brainstorming on how to move the validation logic to another file to avoid fat controllers ///////////////
+    /* const validation = insertUserValidation(submitData)
+    if(!validation) return res.status(500).json({message:'Server error'})
+    if(validation.error !== null){ //so an error was registered
+        return res.status(validation.error.status).json(validation.error.message)
+    }
+    const data = validation.data */
+    ///////////////////  Brainstorming on how to move the validation logic to another file to avoid fat controllers ///////////////
     
     // making sure all three body params are present
     if(!submitData.name || !submitData.profilePhoto || !submitData.user || !submitData.company){
@@ -59,8 +69,8 @@ const insertNewProfile = async (req: Request, res: Response) => {
     }
     
     const data = {
-        name: validator.trim(submitData.name),
-        profilePhoto: validator.trim(submitData.profilePhoto),
+        name: submitData.name.trim(),
+        profilePhoto: submitData.profilePhoto.trim(),
         user: submitData.user,
         company: submitData.company
     }
@@ -167,12 +177,12 @@ const updateProfile = async (req: Request, res: Response) => {
     || (submitData.user && (Number.isInteger(+submitData.user) === false))
     || (submitData.company && (Number.isInteger(+submitData.company) === false))
     ) {
-        return res.status(400).json({message:'Please make sure the name, profilePhoto, user and / or company are of the correct type.'})
+        return res.status(400).json({message:'Please make sure the your submitted inputs of the correct format.'})
     }
     
     // trimming the name if it was submitted, and checking that a value is still left after we trim (deals with submitted spaces as values)
     if(submitData.name){
-        submitData.name = validator.trim(submitData.name)
+        submitData.name = submitData.name.trim()
         if(!submitData.name){
             return res.status(400).json({message:'Please make sure the name is of the correct format.'})
         }
@@ -180,7 +190,7 @@ const updateProfile = async (req: Request, res: Response) => {
     
     // trimming the profilePhoto if it was submitted, and checking that a value is still left after we trim (deals with submitted spaces as values)
     if(submitData.profilePhoto){
-        submitData.profilePhoto = validator.trim(submitData.profilePhoto)
+        submitData.profilePhoto = submitData.profilePhoto.trim()
         if(!submitData.profilePhoto){
             return res.status(400).json({message:'Please make sure the profilePhoto is of the correct format.'})
         }

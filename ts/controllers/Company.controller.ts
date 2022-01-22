@@ -35,7 +35,10 @@ const insertNewCompany = async(req:Request, res:Response)=>{
     }
 
     // trimming string
-    const data = {
+    const data:{
+        name:string,
+        logo:string
+    } = {
         name: submitData.name.trim(),
         logo: submitData.logo.trim()
     }
@@ -124,14 +127,14 @@ const updateCompany = async (req:Request, res:Response)=>{
        (submitData.name && typeof(submitData.name) !== 'string')
     || (submitData.logo && typeof(submitData.logo) !== 'string')
     ) {
-        return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
+        return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
     }
 
     // trimming the available inputs, and returning an error if they are an empty string after trimming
     if(submitData.name){
         submitData.name = submitData.name.trim()
         if(!submitData.name){
-            return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
+            return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
         }
         submitData.slug = createSlug(submitData.name)
     }
@@ -139,7 +142,7 @@ const updateCompany = async (req:Request, res:Response)=>{
     if(submitData.logo){
         submitData.logo = submitData.logo.trim()
         if(!submitData.logo){
-            return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
+            return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
         }
     }
 

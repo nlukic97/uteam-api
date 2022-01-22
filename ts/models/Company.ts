@@ -33,7 +33,8 @@ db.define<CompanyInstance>(
     },
     name:{
         type: DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        unique:true
     },
     slug: {
       type: DataTypes.STRING,
