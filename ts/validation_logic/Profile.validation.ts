@@ -1,5 +1,5 @@
 /* 
-export function insertUserValidation(submitData:{
+export function insertProfileValidation(submitData:{
     name:string,
     profilePhoto:string,
     user: number,

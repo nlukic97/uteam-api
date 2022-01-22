@@ -4,7 +4,7 @@ import Profile from '../models/Profile'
 import User from '../models/User'
 import Company from '../models/Company'
 
-// import { insertUserValidation } from '../validation_logic/User.validation' // currently not implemented, only testing
+// import { insertProfileValidation } from '../validation_logic/Profile.validation' // currently not implemented, only testing
 
 // Getting all profiles with a limit of 20
 const getProfiles = async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ const insertNewProfile = async (req: Request, res: Response) => {
     }
 
     ///////////////////  Brainstorming on how to move the validation logic to another file to avoid fat controllers ///////////////
-    /* const validation = insertUserValidation(submitData)
+    /* const validation = insertProfileValidation(submitData)
     if(!validation) return res.status(500).json({message:'Server error'})
     if(validation.error !== null){ //so an error was registered
         return res.status(validation.error.status).json(validation.error.message)
