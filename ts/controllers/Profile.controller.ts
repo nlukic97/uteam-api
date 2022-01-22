@@ -129,8 +129,8 @@ const updateProfile = async (req: Request, res: Response) => {
         }
     }
 
-    if(req.body.profilePhoto !== undefined){        
-        if(req.body.profilePhoto === ''){            
+    if(req.body.profilePhoto !== undefined){
+        if(req.body.profilePhoto === ''){
             return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
         } else {
             submitData.profilePhoto = req.body.profilePhoto

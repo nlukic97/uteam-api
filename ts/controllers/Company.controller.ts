@@ -28,24 +28,36 @@ const insertNewCompany = async(req:Request, res:Response)=>{
         return res.status(400).json({message:'Name and logo are required fields.'})
     }
     
-    if(typeof(submitData.name) !== 'string' || submitData.name === ''
-    || typeof(submitData.logo) !== 'string' || submitData.logo === ''
+    if(typeof(submitData.name) !== 'string'
+    || typeof(submitData.logo) !== 'string'
     ){
         return res.status(400).json({message:'Please make sure the name and logo are of the correct type.'})
     }
+
+    // trimming string
+    const data = {
+        name: submitData.name.trim(),
+        logo: submitData.logo.trim()
+    }
+
+    // checking if there are any values left to be submitted after trimming
+    if(!data.name || !data.logo){
+        return res.status(400).json({message:'name and logo are required.'})
+    }
+
     
     try {
         // checking if a company with the same submitted name exists
         const companyExists = await Company.findOne({where:{
-            name: submitData.name
+            name: data.name
         }})
         if(companyExists) throw 'A profile with this name already exists. Please enter another name.'
         
         
         // constructing the profile and inserting into db
         Company.create({
-            ...submitData,
-            slug: createSlug(submitData.name)
+            ...data,
+            slug: createSlug(data.name)
         })
         .then((company)=>{
             return res.status(200).json({message:'Company with id ' + company.id + ' created successfully.'})
@@ -71,7 +83,7 @@ const getCompanyById = async (req:Request, res:Response) =>{
     }
 }
 
-
+// updating rows in the company table. Only submitted rows will be considered for update (at least one should be submitted)
 const updateCompany = async (req:Request, res:Response)=>{
     if(!req.params.id || Number.isInteger(+req.params.id) === false){
         return res.status(400).json({message:'Please make sure that the url parameter \'id\' is an integer.'});
@@ -84,9 +96,21 @@ const updateCompany = async (req:Request, res:Response)=>{
         slug?:string|undefined //added later to this object based on the submitted name
     } = {}
     
-    /** Validation of submitted data - checking if any data has been submitted. */
-    if(req.body.name || req.body.name !== '') submitData.name = req.body.name
-    if(req.body.logo || req.body.logo !== '') submitData.logo = req.body.logo
+    /** Validation of submitted data - checking if the submitted body parameters are not an empty string. */
+    if(req.body.name !== undefined){
+        if(req.body.name === ''){
+            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
+        } else {
+            submitData.name = req.body.name
+        }
+    }
+    if(req.body.logo !== undefined){
+        if(req.body.logo === ''){
+            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
+        } else {
+            submitData.logo = req.body.logo
+        }
+    }
     
     
     // making sure at least one of the editable parameters is present
@@ -103,8 +127,22 @@ const updateCompany = async (req:Request, res:Response)=>{
         return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
     }
 
-    // If the user would like to change the company name, we should also change the company slug
-    if(submitData.name) submitData.slug = createSlug(submitData.name)
+    // trimming the available inputs, and returning an error if they are an empty string after trimming
+    if(submitData.name){
+        submitData.name = submitData.name.trim()
+        if(!submitData.name){
+            return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
+        }
+        submitData.slug = createSlug(submitData.name)
+    }
+
+    if(submitData.logo){
+        submitData.logo = submitData.logo.trim()
+        if(!submitData.logo){
+            return res.status(400).json({message:'Please make sure the logo and / or name are of the correct type.'})
+        }
+    }
+
 
     // Check if company exists
     try {
