@@ -1,7 +1,7 @@
 # Seeders
 
 The database can be seeded after the typescript has been compiled to javascript. However, using a seeder is completely optional.
-In order to seed the users table, please run the following command:
+In order to seed the users table, first make sure that your server (or development server) is running. Next, please run the following command:
 
 ```sh
 npm run seed
@@ -58,8 +58,6 @@ This will create the following files:
      }
    )
 
-   Movie.sync({ force: false })
-
    export default Movie
    ```
 
@@ -97,7 +95,10 @@ This will create the following files:
    - import the movie seeder
    - call it (passing in a number telling the seeder how many times to perform the `MovieSeeder` logic).
 
+### Please note - In order to avoid errors, you must first call the seeders for tables that contain `no foreign keys`, and only then should you call seeders for tables that contain foreign keys.
+
 ```js
+
 /* Seeder import */
 import MovieSeeder from './MovieSeeder' // ---- import
 

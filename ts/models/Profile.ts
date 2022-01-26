@@ -7,6 +7,7 @@ interface ProfileAttributes {
   name?: string,
   profilePhoto?: string,
   user?:number,
+  company?:number,
   createdAt?: string,
   updatedAt?: string,
 }

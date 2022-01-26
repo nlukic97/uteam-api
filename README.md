@@ -8,32 +8,36 @@
 
 ### GET Routes
 
-| Endpoint         | Type | Description                                                                                              |
-| ---------------- | ---- | -------------------------------------------------------------------------------------------------------- |
-| `/countAllUsers` | GET  | Returns the number of rows in the `users` table. Authentication bearer token is required for this route. |
-| `/* `            | GET  | Wildcard route. Returns an object containing a message.                                                  |
-| `/profiles `     | GET  | Returns a list of profiles (limit set to 20).                                                            |
-| `/profiles/{id}` | GET  | Returns a profile by {id} url parameter.                                                                 |
+| Endpoint          | Type | Description                                                                                              |
+| ----------------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| `/countAllUsers`  | GET  | Returns the number of rows in the `users` table. Authentication bearer token is required for this route. |
+| `/profiles `      | GET  | Returns a list of profiles (limit set to 20).                                                            |
+| `/profiles/{id}`  | GET  | Returns a profile by {id} url parameter.                                                                 |
+| `/companies`      | GET  | Returns a list of companies (limit set to 20)parameter.                                                  |
+| `/companies/{id}` | GET  | Returns a company by {id} url parameter.                                                                 |
 
 ### POST Routes
 
-| Endpoint    | Type | Expected request body                                       | Description                                                                                                                  |
-| ----------- | ---- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `/register` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table.                                                                             |
-| `/profiles` | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `profiles` table.                                                                          |
-| `/login`    | POST | { `name`: string, `password`: string}                       | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user. |
+| Endpoint     | Type | Expected request body                                       | Description                                                                                                                  |
+| ------------ | ---- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `/register`  | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table.                                                                             |
+| `/profiles`  | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `profiles` table.                                                                          |
+| `/login`     | POST | { `name`: string, `password`: string}                       | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user. |
+| `/companies` | POST | { `logo`: string, `name`: string}                           | Used to insert a new row into the `companies` table.                                                                         |
 
 ### PUT Routes
 
-| Endpoint         | Type | Expected request body                                          | Description                                                                                          |
-| ---------------- | ---- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `/profiles/{id}` | PUT  | { `username`?: string, `email`?: string, `password`?: string } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table. |
+| Endpoint          | Type | Expected request body                                          | Description                                                                                           |
+| ----------------- | ---- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `/profiles/{id}`  | PUT  | { `username`?: string, `email`?: string, `password`?: string } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table.  |
+| `/companies/{id}` | PUT  | { `logo`?: string, `name`?: string}                            | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `companies` table. |
 
 ### DELETE Routes
 
-| Endpoint         | Type   | Expected request body | Description                                                                            |
-| ---------------- | ------ | --------------------- | -------------------------------------------------------------------------------------- |
-| `/profiles/{id}` | DELETE | /                     | Used to delete a row in the `profiles` table based on the supplied {id} url parameter. |
+| Endpoint          | Type   | Expected request body | Description                                                                             |
+| ----------------- | ------ | --------------------- | --------------------------------------------------------------------------------------- |
+| `/profiles/{id}`  | DELETE | /                     | Used to delete a row in the `profiles` table based on the supplied {id} url parameter.  |
+| `/companies/{id}` | DELETE | /                     | Used to delete a row in the `companies` table based on the supplied {id} url parameter. |
 
 ---
 
@@ -60,7 +64,7 @@
 ... which will create a `.env` file. Open it and insert the required environemnt variables (port and database connection parameters).
 
 Make sure to also add a value to the "ACCESS_TOKEN_SECRET" .env parameter with a random string of bytes (leaving it empty will cause errors upon user registration). You can get this string by running the following commands in a terminal:
-        
+
         node
         require('crypto').randomBytes(64).toString('hex')
 
@@ -87,13 +91,37 @@ You also might need to leave the PORT variable in `.env` empty when deploying th
 
 ## Models
 
-- User
-  - username
-  - email
-  - password
+### User
 
-- Profiles
-    - status
-    - name
-    - profilePhoto
-    - user
+- id
+- username
+- email
+- password
+- role ---> `'company-user'`|`'company-admin'`|`'superadmin'` (default: superadmin).
+
+### Profile
+
+- id
+- status ---> `'pending'`|`'published'` (default: pending).
+- name
+- profilePhoto
+- user ---> `foreignKey`
+- company ---> `foreignKey`
+
+### Company
+
+- id
+- logo
+- name
+- slug
+
+---
+
+## Associations
+
+- `User` to `Profile` = One to One
+- `Profile` to `Company` = One to Many _(one Company has many Profiles, one Profile belongs to one Company)_
+
+Note:
+
+- _one company could have many users (and likewise, one user could belong one company) `through` the Profile table - still not implemented._
