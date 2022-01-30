@@ -1,7 +1,12 @@
 import express from 'express'
 const router = express.Router()
 
-import AuthMiddleware from '../middleware/Authenticate'
+// Auth middleware
+import AuthMiddleware from '../middleware/auth/Authenticate'
+
+// Validation middleware
+import RegisterValidaton from '../middleware/validation/Register.middleware'
+import LoginValidation from '../middleware/validation/Login.middleware'
 
 /** Controller imports */
 import AppController from '../controllers/App.controller'
@@ -9,6 +14,8 @@ import ProfileController from '../controllers/Profile.controller'
 import UserController from '../controllers/User.controller'
 import CompanyController from '../controllers/Company.controller'
 
+
+/* --- Routes --- */
 // Profile routes
 router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
@@ -17,9 +24,9 @@ router.put('/profiles/:id', ProfileController.updateProfile)
 router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
-router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //using the auth middleware
-router.post('/register', UserController.register)
-router.post('/login', UserController.login)
+router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //auth middleware
+router.post('/register', RegisterValidaton, UserController.register) // register validation middleware
+router.post('/login', LoginValidation, UserController.login) // login validation middleware
 
 // Company routes
 router.get('/companies',CompanyController.getCompanies)
