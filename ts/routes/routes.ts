@@ -1,6 +1,8 @@
 import express from 'express'
 const router = express.Router()
 
+import passport from 'passport'
+
 // Auth middleware
 import AuthMiddleware from '../middleware/auth/Authenticate'
 
@@ -30,7 +32,13 @@ router.delete('/profiles/:id', ProfileController.deleteProfile)
 // User routes
 router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //auth middleware
 router.post('/register', RegisterValidaton, UserController.register) // register validation middleware
+
 router.post('/login', LoginValidation, UserController.login) // login validation middleware
+
+// login validation middleware - WILL NOT WORK
+/* router.post('/login', LoginValidation, passport.authenticate('local'),(req,res)=>{
+    res.send(200).json({message:'Test message for auth that does not work'})
+}) */
 
 // Company routes
 router.get('/companies',CompanyController.getCompanies)

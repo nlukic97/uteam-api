@@ -5,6 +5,13 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 dotenv.config()
 
+// Passport attempt
+/* import passport from 'passport'
+import InitLocal from './strategies/Local'
+InitLocal(passport)
+passport.initialize()
+passport.session() */
+
 // Making sure that there is an access token in the .env folder. If there is not, the application may crash during user registration
 if(!process.env.ACCESS_TOKEN_SECRET) throw new Error('Your .env variable "ACCESS_TOKEN_SECRET" is empty - please follow the README instructions in order to add it.')
 

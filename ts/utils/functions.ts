@@ -5,7 +5,9 @@ export function getRandomInt(min:number, max:number):number {
   }
 
 export function createSlug(string:string):string{
-  return string.toLowerCase().split(' ').join('-').trim()
+  // return string.toLowerCase().split(' ').join('-').trim()
+  const regex = /[^A-Za-z0-9-\s]/g // so we will remove all characters that are not letters, numbers, space characters, or slashes
+  return string.replaceAll(regex,'').replaceAll(' ','-')
 }
 
 type userRoleArray = ['company-user','company-admin','superadmin']

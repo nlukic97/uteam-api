@@ -7,7 +7,6 @@ import { createSlug } from '../utils/functions'
 
 import Company from '../models/Company'
 import Profile from '../models/Profile'
-// import Profile from '../models/Profile'
 
 const defaultLogoSrc = 'https://d1qbemlbhjecig.cloudfront.net/prod/3.81.1/staticfiles/dist/app/bento-components/carousel/media/default-logo.svg?72d28710fb34f035c7eb69af17c16020'
 
