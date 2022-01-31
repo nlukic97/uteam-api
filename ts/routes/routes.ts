@@ -7,6 +7,10 @@ import AuthMiddleware from '../middleware/auth/Authenticate'
 // Validation middleware
 import RegisterValidaton from '../middleware/validation/Register.middleware'
 import LoginValidation from '../middleware/validation/Login.middleware'
+import CompanyInsertValidation from '../middleware/validation/Company.insert.validation'
+import CompanyUpdateValidation from '../middleware/validation/Company.update.validation'
+import ProfileInsertValidation from '../middleware/validation/Profile.insert.validation'
+import ProfileUpdateValidation from '../middleware/validation/Profile.update.validation'
 
 /** Controller imports */
 import AppController from '../controllers/App.controller'
@@ -19,8 +23,8 @@ import CompanyController from '../controllers/Company.controller'
 // Profile routes
 router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
-router.post('/profiles', ProfileController.insertNewProfile)
-router.put('/profiles/:id', ProfileController.updateProfile)
+router.post('/profiles', ProfileInsertValidation, ProfileController.insertNewProfile) // profile insert validation middleware
+router.put('/profiles/:id', ProfileUpdateValidation, ProfileController.updateProfile) // profile update validation middleware
 router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
@@ -30,9 +34,9 @@ router.post('/login', LoginValidation, UserController.login) // login validation
 
 // Company routes
 router.get('/companies',CompanyController.getCompanies)
-router.post('/companies',CompanyController.insertNewCompany)
+router.post('/companies', CompanyInsertValidation, CompanyController.insertNewCompany) // company insert validation middleware
 router.get('/companies/:id',CompanyController.getCompanyById)
-router.put('/companies/:id',CompanyController.updateCompany)
+router.put('/companies/:id',CompanyUpdateValidation, CompanyController.updateCompany) // company update validation middleware
 router.delete('/companies/:id',CompanyController.deleteCompany)
 
 // 404 errors for POST, PUT, and DELETE - Keep these routes at the bottom of this router page

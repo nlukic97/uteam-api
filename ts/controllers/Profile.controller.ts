@@ -33,52 +33,14 @@ const getProfileById = async (req: Request, res: Response) => {
 
 // insert a new profile from POST request body
 const insertNewProfile = async (req: Request, res: Response) => {
-    const submitData:{
+    /* Validation done with middleware */
+    const data:{
         name:string,
         profilePhoto:string,
         user: number,
         company:number
-    } = {
-        name: req.body.name,
-        profilePhoto: req.body.profilePhoto,
-        user: req.body.user,
-        company:req.body.company
-    }
+    } = req.body
 
-    ///////////////////  Brainstorming on how to move the validation logic to another file to avoid fat controllers ///////////////
-    /* const validation = insertProfileValidation(submitData)
-    if(!validation) return res.status(500).json({message:'Server error'})
-    if(validation.error !== null){ //so an error was registered
-        return res.status(validation.error.status).json(validation.error.message)
-    }
-    const data = validation.data */
-    ///////////////////  Brainstorming on how to move the validation logic to another file to avoid fat controllers ///////////////
-    
-    // making sure all three body params are present
-    if(!submitData.name || !submitData.profilePhoto || !submitData.user || !submitData.company){
-        return res.status(400).json({message:'name, profilePhoto, user, and company are required.'})
-    }
-    
-    // making sure all three parameters are of the correct type (strings, and user to be an integer)
-    if(typeof(submitData.name) !== 'string'
-    ||typeof(submitData.profilePhoto) !== 'string'
-    || Number.isInteger(+submitData.user) === false
-    || Number.isInteger(+submitData.company) === false
-    ){
-        return res.status(400).json({message:'Please make sure the name, profilePhoto, user, and company are of the correct type.'})
-    }
-    
-    const data = {
-        name: submitData.name.trim(),
-        profilePhoto: submitData.profilePhoto.trim(),
-        user: submitData.user,
-        company: submitData.company
-    }
-    
-    // One more validation after trimming the strings (this prevents a user submitting an empty space as a valid field for name && profilePhoto)
-    if(!data.name || !data.profilePhoto || !data.user || !data.company){
-        return res.status(400).json({message:'name, profilePhoto and user are required.'})
-    }
     
     // Query checks before submit
     try {
@@ -111,90 +73,14 @@ const insertNewProfile = async (req: Request, res: Response) => {
         })
         
     } catch(error){
-        res.status(400).json({message:error})
+        return res.status(400).json({message:error})
     }
 }
 
 
 // insert a new profile from POST request body
 const updateProfile = async (req: Request, res: Response) => {
-    if(!req.params.id || Number.isInteger(+req.params.id) === false){
-        return res.status(400).json({message:'Please make sure that the url parameter \'id\' is an integer.'});
-    }
-    
-    //All three are technically optional, but something should be submitted, validation for this is 2 paragraphs lower
-    const submitData:{
-        name?:string,
-        profilePhoto?:string,
-        user?: number,
-        company?: number,
-    } = {}
-    
-    /** Validation of submitted data - checking if an optional parameter has been submitted as an empty string. */
-    if(req.body.name !== undefined){        
-        if(req.body.name === ''){            
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.name = req.body.name
-        }
-    }
-
-    if(req.body.profilePhoto !== undefined){
-        if(req.body.profilePhoto === ''){
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.profilePhoto = req.body.profilePhoto
-        }
-    }
-
-    if(req.body.user !== undefined){        
-        if(req.body.user === ''){            
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.user = req.body.user
-        }
-    }
-
-    if(req.body.company !== undefined){        
-        if(req.body.company === ''){            
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.company = req.body.company
-        }
-    }
-    
-    
-    // making sure at least one of the editable parameters is present
-    if(!submitData.name && !submitData.profilePhoto && !submitData.user && !submitData.company){
-        return res.status(400).json({message:'No data submitted for update. Please submit the fields you would like to change (name, profilePhoto, user, and / or company).'})
-    }
-    
-    
-    //checking that present submitData is of correct type
-    if(
-       (submitData.name && typeof(submitData.name) !== 'string') 
-    || (submitData.profilePhoto && typeof(submitData.profilePhoto) !== 'string')
-    || (submitData.user && (Number.isInteger(+submitData.user) === false))
-    || (submitData.company && (Number.isInteger(+submitData.company) === false))
-    ) {
-        return res.status(400).json({message:'Please make sure the your submitted inputs of the correct format.'})
-    }
-    
-    // trimming the name if it was submitted, and checking that a value is still left after we trim (deals with submitted spaces as values)
-    if(submitData.name){
-        submitData.name = submitData.name.trim()
-        if(!submitData.name){
-            return res.status(400).json({message:'Please make sure the name is of the correct format.'})
-        }
-    }
-    
-    // trimming the profilePhoto if it was submitted, and checking that a value is still left after we trim (deals with submitted spaces as values)
-    if(submitData.profilePhoto){
-        submitData.profilePhoto = submitData.profilePhoto.trim()
-        if(!submitData.profilePhoto){
-            return res.status(400).json({message:'Please make sure the profilePhoto is of the correct format.'})
-        }
-    }
+    const submitData = req.body
 
     // Check if user and / or profile exist, if a new value for these fields was submitted
     try {
