@@ -34,7 +34,8 @@ const insertNewCompany = async(req:Request, res:Response)=>{
         // constructing the profile and inserting into db
         Company.create({
             ...data,
-            slug: createSlug(data.name)
+            slug: createSlug(data.name),
+            companyOwner: 1 // current fix for now, but will have to get this from the JWT
         })
         .then((company)=>{
             return res.status(200).json({message:'Company with id ' + company.id + ' created successfully.'})

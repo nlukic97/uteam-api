@@ -15,7 +15,8 @@ import dotenv from 'dotenv'
         Company.build({
           logo: faker.system.directoryPath(),
           name: faker.internet.userName(),
-          slug:faker.name.findName()
+          slug: faker.name.findName(),
+          companyOwner: num + 1
         }).save()
     
         num++
