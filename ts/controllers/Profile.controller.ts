@@ -23,7 +23,7 @@ const getProfileById = async (req: Request, res: Response) => {
         if(!req.params.id || Number.isInteger(+req.params.id) === false){
             return res.status(400).json({message:'Please make sure that the url parameter \'id\' is an integer.'});
         }
-        const profiles = await Profile.findOne({where:{id:req.params.id}}) 
+        const profiles = await Profile.findOne({where:{id:+req.params.id}}) 
         return res.status(200).json(profiles)
     } catch(error){
         res.status(400).json({message:error})
@@ -53,10 +53,9 @@ const insertNewProfile = async (req: Request, res: Response) => {
 
         // checking if submitted company exists
         const companyExists = await Company.findOne({where:{
-            id: data.user
+            id: data.company
         }})
         if(companyExists === null) throw `A company with the id ${data.company} does not exist and cannot be assigned to this profile.`;
-
 
         // Checking if a profile submitted name exists
         const profileExists = await Profile.findOne({where:{
@@ -89,7 +88,6 @@ const updateProfile = async (req: Request, res: Response) => {
             const userExists = await User.findOne({where:{
                 id: submitData.user
             }})
-            
             if(userExists === null) throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
         }
 
@@ -98,7 +96,6 @@ const updateProfile = async (req: Request, res: Response) => {
             const companyExists = await Company.findOne({where:{
                 id: submitData.company
             }})
-            
             if(companyExists === null) throw `A company with the id ${submitData.company} does not exist and cannot be assigned to this profile.`;
         }
 

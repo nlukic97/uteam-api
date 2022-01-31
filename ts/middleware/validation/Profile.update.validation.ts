@@ -36,7 +36,7 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
         if(req.body.user === ''){            
             return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
         } else {
-            submitData.user = req.body.user
+            submitData.user = +req.body.user
         }
     }
 
@@ -44,7 +44,7 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
         if(req.body.company === ''){            
             return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
         } else {
-            submitData.company = req.body.company
+            submitData.company = +req.body.company
         }
     }
     
@@ -59,8 +59,8 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
     if(
        (submitData.name && typeof(submitData.name) !== 'string') 
     || (submitData.profilePhoto && typeof(submitData.profilePhoto) !== 'string')
-    || (submitData.user && (Number.isInteger(+submitData.user) === false))
-    || (submitData.company && (Number.isInteger(+submitData.company) === false))
+    || (submitData.user && (Number.isInteger(submitData.user) === false || submitData.user === 0))
+    || (submitData.company && (Number.isInteger(submitData.company) === false || submitData.company === 0))
     ) {
         return res.status(400).json({message:'Please make sure the your submitted inputs of the correct format.'})
     }
