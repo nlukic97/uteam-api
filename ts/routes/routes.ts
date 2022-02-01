@@ -33,12 +33,14 @@ router.delete('/profiles/:id', ProfileController.deleteProfile)
 router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //auth middleware
 router.post('/register', RegisterValidaton, UserController.register) // register validation middleware
 
-router.post('/login', LoginValidation, UserController.login) // login validation middleware
+// router.post('/login', LoginValidation, UserController.login) // login validation middleware
 
 // login validation middleware - WILL NOT WORK
-/* router.post('/login', LoginValidation, passport.authenticate('local'),(req,res)=>{
-    res.send(200).json({message:'Test message for auth that does not work'})
-}) */
+router.post('/login', LoginValidation, passport.authenticate('local',{session:false}),(req,res)=>{
+    if(req.isAuthenticated()) return res.status(200).json({message:'User is authenticated, here is a token'})
+    return res.sendStatus(401) //passport handles this, but just as a failsafe
+    
+})
 
 // Company routes
 router.get('/companies',CompanyController.getCompanies)
