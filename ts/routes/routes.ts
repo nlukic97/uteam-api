@@ -2,7 +2,7 @@ import express from 'express'
 const router = express.Router()
 
 import passport from 'passport'
-
+import jwt from 'jsonwebtoken'
 // Auth middleware
 import AuthMiddleware from '../middleware/auth/Authenticate'
 
@@ -19,6 +19,7 @@ import AppController from '../controllers/App.controller'
 import ProfileController from '../controllers/Profile.controller'
 import UserController from '../controllers/User.controller'
 import CompanyController from '../controllers/Company.controller'
+import { log } from 'console'
 
 
 /* --- Routes --- */
@@ -36,10 +37,12 @@ router.post('/register', RegisterValidaton, UserController.register) // register
 // router.post('/login', LoginValidation, UserController.login) // login validation middleware
 
 // login validation middleware - WILL NOT WORK
-router.post('/login', LoginValidation, passport.authenticate('local',{session:false}),(req,res)=>{
-    if(req.isAuthenticated()) return res.status(200).json({message:'User is authenticated, here is a token'})
-    return res.sendStatus(401) //passport handles this, but just as a failsafe
-    
+router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{
+    if(req.isAuthenticated()){
+        const accessToken: string | undefined = await jwt.sign({username: req.user.username}, process.env.ACCESS_TOKEN_SECRET)
+        return res.status(200).json({message:'User is authenticated, here is a token',token:accessToken})
+    }
+    return res.sendStatus(401) //passport handles this, but just as a failsafe  
 })
 
 // Company routes
