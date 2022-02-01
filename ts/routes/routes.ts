@@ -3,8 +3,9 @@ const router = express.Router()
 
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
-// Auth middleware
-import AuthMiddleware from '../middleware/auth/Authenticate'
+
+
+// import AuthMiddleware from '../middleware/auth/Authenticate' // DEPRECATED, now we use passport-jwt (see ./strategies/JWTStrategy.ts)
 
 // Validation middleware
 import RegisterValidaton from '../middleware/validation/Register.middleware'
@@ -19,7 +20,6 @@ import AppController from '../controllers/App.controller'
 import ProfileController from '../controllers/Profile.controller'
 import UserController from '../controllers/User.controller'
 import CompanyController from '../controllers/Company.controller'
-import { log } from 'console'
 
 
 /* --- Routes --- */
@@ -31,12 +31,12 @@ router.put('/profiles/:id', ProfileUpdateValidation, ProfileController.updatePro
 router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
-router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //auth middleware
+// router.get('/countAllUsers', AuthMiddleware, UserController.countAllUsers) //auth middleware - DEPRECATED
+router.get('/countAllUsers', passport.authenticate('jwt',{session:false}),UserController.countAllUsers) //auth middleware
 router.post('/register', RegisterValidaton, UserController.register) // register validation middleware
 
-// router.post('/login', LoginValidation, UserController.login) // login validation middleware
-
-// login validation middleware - WILL NOT WORK
+// login validation middleware
+// router.post('/login', LoginValidation, UserController.login) // DEPRECATED - see ./strategies/Local.ts for new method
 router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{
     if(req.isAuthenticated()){
         const accessToken: string | undefined = await jwt.sign({username: req.user.username}, process.env.ACCESS_TOKEN_SECRET)

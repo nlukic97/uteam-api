@@ -18,7 +18,9 @@ app.use(express.json())
 
 // Passport init
 import passportLocal from './strategies/Local'
+import passportJWT from './strategies/JWTStrategy'
 app.use(passportLocal.initialize())
+app.use(passportJWT.initialize())
 
 // routing
 import routes from './routes/routes'
