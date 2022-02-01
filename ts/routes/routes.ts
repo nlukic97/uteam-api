@@ -27,7 +27,7 @@ import CompanyController from '../controllers/Company.controller'
 router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
 router.post('/profiles', ProfileInsertValidation, ProfileController.insertNewProfile) // profile insert validation middleware
-router.put('/profiles/:id', ProfileUpdateValidation, ProfileController.updateProfile) // profile update validation middleware
+router.put('/profiles/:id', passport.authenticate('jwt',{session:false}), ProfileUpdateValidation, ProfileController.updateProfile) // profile update validation middleware
 router.delete('/profiles/:id', ProfileController.deleteProfile)
 
 // User routes
@@ -37,10 +37,10 @@ router.post('/register', RegisterValidaton, UserController.register) // register
 
 // login validation middleware
 // router.post('/login', LoginValidation, UserController.login) // DEPRECATED - see ./strategies/Local.ts for new method
-router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{
+router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{    
     if(req.isAuthenticated()){
         const accessToken: string | undefined = await jwt.sign({username: req.user.username}, process.env.ACCESS_TOKEN_SECRET)
-        return res.status(200).json({message:'User is authenticated, here is a token',token:accessToken})
+        return res.status(200).json({message:'User is authenticated.',token:accessToken})
     }
     return res.sendStatus(401) //passport handles this, but just as a failsafe  
 })
@@ -49,7 +49,7 @@ router.post('/login', LoginValidation, passport.authenticate('local',{session:fa
 router.get('/companies',CompanyController.getCompanies)
 router.post('/companies', CompanyInsertValidation, CompanyController.insertNewCompany) // company insert validation middleware
 router.get('/companies/:id',CompanyController.getCompanyById)
-router.put('/companies/:id',CompanyUpdateValidation, CompanyController.updateCompany) // company update validation middleware
+router.put('/companies/:id',passport.authenticate('jwt',{session:false}), CompanyUpdateValidation, CompanyController.updateCompany) // company update validation middleware
 router.delete('/companies/:id',CompanyController.deleteCompany)
 
 // 404 errors for POST, PUT, and DELETE - Keep these routes at the bottom of this router page

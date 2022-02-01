@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Company from '../models/Company'
+import User from '../models/User'
 
 import { createSlug } from '../utils/functions'
 
@@ -21,7 +22,7 @@ const insertNewCompany = async(req:Request, res:Response)=>{
         name:string,
         logo:string
     } = req.body
-
+    
     
     try {
         // checking if a company with the same submitted name exists
@@ -70,20 +71,28 @@ const updateCompany = async (req:Request, res:Response)=>{
         logo?:string,
         slug?:string
     } = req.body
-
+    
     // Check if company exists
     try {
         // checking if the company from the req.params.id exists
-        const companyExists = await Company.findOne({where:{
-            id: req.params.id
-        }})
+        const companyExists = await Company.findOne({
+            where:{
+                id: req.params.id
+            },
+            include:User
+        })
         
         if(companyExists === null) throw `A company with the id ${req.params.id} does not exist.`;
+        
+        // If the user who has the company is not the same as the user who is making this request (from passport-jwt)        
+        if(companyExists.User.id !== req.user.id) throw `You are not the owner of the company ${req.params.id}, and cannot change it.`; //error on user, might have to declare on Company model
+        
+        
     } catch(err){
         return res.status(400).json({message:err})
     }
     
-
+    
     // If all conditions are met, update the company
     try {
         const companyUpdate = await Company.update(submitData,{
