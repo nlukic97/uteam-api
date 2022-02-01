@@ -15,7 +15,7 @@ interface ReqRes {
 }
 
 /* --- Getting the number of users */
-const countAllUsers: ReqRes = async (req, res) => {
+const countAllUsers: ReqRes = async (req, res) => {   
   const userCount = await User.count()
   res
   .status(200)

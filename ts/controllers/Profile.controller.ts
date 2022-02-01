@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import Profile from '../models/Profile'
 import User from '../models/User'
 import Company from '../models/Company'
+import { profile } from 'console'
 
 // import { insertProfileValidation } from '../validation_logic/Profile.validation' // currently not implemented, only testing
 
@@ -40,7 +41,7 @@ const insertNewProfile = async (req: Request, res: Response) => {
         user: number,
         company:number
     } = req.body
-
+    
     
     // Query checks before submit
     try {
@@ -49,20 +50,20 @@ const insertNewProfile = async (req: Request, res: Response) => {
             id: data.user
         }})
         if(userExists === null) throw `A user with the id ${data.user} does not exist and cannot be assigned to this profile.`;
-
-
+        
+        
         // checking if submitted company exists
         const companyExists = await Company.findOne({where:{
             id: data.company
         }})
         if(companyExists === null) throw `A company with the id ${data.company} does not exist and cannot be assigned to this profile.`;
-
+        
         // Checking if a profile submitted name exists
         const profileExists = await Profile.findOne({where:{
             name: data.name
         }})
         if(profileExists) throw 'A profile with this name already exists. Please enter another name.'
-
+        
         
         // previous checks have passed - constructing the profile
         Profile.create(data).then((profile)=>{
@@ -80,36 +81,46 @@ const insertNewProfile = async (req: Request, res: Response) => {
 // insert a new profile from POST request body
 const updateProfile = async (req: Request, res: Response) => {
     const submitData = req.body
-
+    
     // Check if user and / or profile exist, if a new value for these fields was submitted
     try {
-        // checking if a user with a specific id exists (if it is supplied by the user in the req.body.user parameter)
+        // 1. checking if the profile from the req.params.id exists
+        const profileExists = await Profile.findOne({
+            where:{
+                id: req.params.id
+            },
+            include:User
+        })
+        
+        if(profileExists === null) throw `A profile with the id ${req.params.id} does not exist and cannot be assigned to this profile.`;
+
+        // If the user who has the profile is not the same as the user who is making this request (from passport-jwt)
+        if(profileExists.User.id !== req.user.id) throw `You are not the owner of the profile ${req.params.id}, and cannot change it.`; //error on user, might have to declare on Company model
+        
+
+        // 2. checking if a user with a specific id exists (if it is supplied by the user in the req.body.user parameter)
         if(submitData.user){ 
             const userExists = await User.findOne({where:{
                 id: submitData.user
             }})
             if(userExists === null) throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
         }
-
-        // checking if a company with a specific id exists (if it is supplied by the user in the req.body.user parameter)
+        
+        // 3. checking if a company with a specific id exists (if it is supplied by the user in the req.body.user parameter)
         if(submitData.company){ 
             const companyExists = await Company.findOne({where:{
                 id: submitData.company
             }})
             if(companyExists === null) throw `A company with the id ${submitData.company} does not exist and cannot be assigned to this profile.`;
         }
-
-        // checking if the profile from the req.params.id exists
-        const profileExists = await Profile.findOne({where:{
-            id: req.params.id
-        }})
         
-        if(profileExists === null) throw `A profile with the id ${req.params.id} does not exist and cannot be assigned to this profile.`;
+        
+        
     } catch(err){
         return res.status(400).json({message:err})
     }
     
-
+    
     // If all conditions are met, update the profile
     try {
         const profileUpdate = await Profile.update(submitData,{

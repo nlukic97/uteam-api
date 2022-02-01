@@ -1,5 +1,9 @@
-// Middleware
-import {Request, Response, NextFunction as Next } from 'express';
+/**
+ *  ****** Middleware - DEPRECATED. ******
+ * See ./strategies/JWTStrategy.ts which is the new method for auth
+ */
+
+/* import {Request, Response, NextFunction as Next } from 'express';
 import jwt from 'jsonwebtoken'
 
 type headerToken = string | undefined
@@ -22,4 +26,4 @@ const authenticateToken = (req: Request, res: Response, next: Next) =>{
   })
 }
 
-export default authenticateToken
+export default authenticateToken */
