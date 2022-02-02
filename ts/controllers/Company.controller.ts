@@ -120,14 +120,23 @@ const deleteCompany = async (req:Request, res:Response)=>{
     }
     
     try {
-        const companyDelete = await Company.destroy({
+        const company = await Company.findOne({
             where:{
                 id: req.params.id
-            }
+            },
+            include:User
         })
         
-        if(companyDelete){
-            return res.status(200).json({message:'Company with id '+ req.params.id + ' has been deleted.'})
+        if(company){
+            if(company.User.id !== req.user.id) throw `You are not the owner of the company ${req.params.id}, and cannot delete it.`; //error on user, might have to declare on Company model
+
+            company.destroy()
+            .then(()=>{
+                return res.status(200).json({message:'Company with id '+ req.params.id + ' has been deleted.'})
+            })
+            .catch(err=>{
+                throw err
+            })
         } else {
             throw 'Unable to delete company - it has not been found.'
         }

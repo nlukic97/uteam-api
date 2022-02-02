@@ -11,7 +11,6 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
     const submitData:{
         name?:string,
         profilePhoto?:string,
-        user?: number,
         company?: number,
     } = {}
     
@@ -32,14 +31,6 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
         }
     }
 
-    if(req.body.user !== undefined){        
-        if(req.body.user === ''){            
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.user = +req.body.user
-        }
-    }
-
     if(req.body.company !== undefined){        
         if(req.body.company === ''){            
             return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
@@ -50,8 +41,8 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
     
     
     // making sure at least one of the editable parameters is present
-    if(!submitData.name && !submitData.profilePhoto && !submitData.user && !submitData.company){
-        return res.status(400).json({message:'No data submitted for update. Please submit the fields you would like to change (name, profilePhoto, user, and / or company).'})
+    if(!submitData.name && !submitData.profilePhoto && !submitData.company){
+        return res.status(400).json({message:'No data submitted for update. Please submit the fields you would like to change (name, profilePhoto, and / or company).'})
     }
     
     
@@ -59,7 +50,6 @@ const ProfileUpdateValidation = (req:Request,res:Response,next:Next) =>{
     if(
        (submitData.name && typeof(submitData.name) !== 'string') 
     || (submitData.profilePhoto && typeof(submitData.profilePhoto) !== 'string')
-    || (submitData.user && (Number.isInteger(submitData.user) === false || submitData.user === 0))
     || (submitData.company && (Number.isInteger(submitData.company) === false || submitData.company === 0))
     ) {
         return res.status(400).json({message:'Please make sure the your submitted inputs of the correct format.'})

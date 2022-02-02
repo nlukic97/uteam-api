@@ -3,7 +3,6 @@ import { Request, Response } from 'express'
 import Profile from '../models/Profile'
 import User from '../models/User'
 import Company from '../models/Company'
-import { profile } from 'console'
 
 // import { insertProfileValidation } from '../validation_logic/Profile.validation' // currently not implemented, only testing
 
@@ -97,16 +96,7 @@ const updateProfile = async (req: Request, res: Response) => {
         // If the user who has the profile is not the same as the user who is making this request (from passport-jwt)
         if(profileExists.User.id !== req.user.id) throw `You are not the owner of the profile ${req.params.id}, and cannot change it.`; //error on user, might have to declare on Company model
         
-
-        // 2. checking if a user with a specific id exists (if it is supplied by the user in the req.body.user parameter)
-        if(submitData.user){ 
-            const userExists = await User.findOne({where:{
-                id: submitData.user
-            }})
-            if(userExists === null) throw `A user with the id ${submitData.user} does not exist and cannot be assigned to this profile.`;
-        }
-        
-        // 3. checking if a company with a specific id exists (if it is supplied by the user in the req.body.user parameter)
+        // 2. checking if a company with a specific id exists (if it is supplied by the user in the req.body.user parameter)
         if(submitData.company){ 
             const companyExists = await Company.findOne({where:{
                 id: submitData.company
@@ -142,20 +132,29 @@ const updateProfile = async (req: Request, res: Response) => {
 
 
 // Delete a profile with by the supplied :id parameter
-const deleteProfile = async (req: Request, res: Response) => {    
+const deleteProfile = async (req: Request, res: Response) => {
     if(!req.params.id || Number.isInteger(+req.params.id) === false){
         return res.status(400).json({message:'Please make sure that the url parameter \'id\' is an integer.'});
     }
     
     try {
-        const profileDelete = await Profile.destroy({
+        const profile = await Profile.findOne({
             where:{
                 id: req.params.id
-            }
+            },
+            include:User
         })
         
-        if(profileDelete){
-            return res.status(200).json({message:'Profile with id '+ req.params.id + ' has been deleted.'})
+        if(profile){
+            if(profile.User.id !== req.user.id) throw `You are not the owner of the profile ${req.params.id}, and cannot delete it.`; //error on user, might have to declare on Profile model
+
+            profile.destroy()
+            .then(()=>{
+                return res.status(200).json({message:'Profile with id '+ req.params.id + ' has been deleted.'})
+            })
+            .catch(err=>{
+                throw err
+            })
         } else {
             throw 'Unable to delete profile - it has not been found.'
         }
