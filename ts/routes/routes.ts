@@ -41,7 +41,8 @@ router.delete('/profiles/:id', passport.authenticate('jwt',{session:false}), Pro
 
 // 2. --------- --------- ---------  User routes
 router.get('/countAllUsers', UserController.countAllUsers)
-router.post('/register', RegisterValidaton, UserController.register)
+// router.post('/register', RegisterValidaton, UserController.register)
+router.post('/register', UserController.register)
 
 router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{
     if(req.isAuthenticated()){

@@ -8,6 +8,8 @@ import { createSlug } from '../utils/functions'
 import Company from '../models/Company'
 import Profile from '../models/Profile'
 
+import sequelize from '../config/database'
+
 const defaultLogoSrc = 'https://d1qbemlbhjecig.cloudfront.net/prod/3.81.1/staticfiles/dist/app/bento-components/carousel/media/default-logo.svg?72d28710fb34f035c7eb69af17c16020'
 
 interface ReqRes {
@@ -34,7 +36,7 @@ const register = async (req: Request, res: Response) => {
     companyLogo?:string,
     companyName?:string
   }
-
+  
   const data:RequestBody = req.body //req.body sanitized and validated in middleware
   
   const salt = bcrypt.genSaltSync(10);
@@ -46,52 +48,53 @@ const register = async (req: Request, res: Response) => {
     username: data.username,
     password: hash
   }
-
+  
   // data used for company insert
   const insertCompanyData:{name:string, logo:string} = {
     name: data.companyName || `${data.username}'s company`,
     logo: data.companyLogo || defaultLogoSrc
   }
-
+  
   // data used for profile insert
   const insertProfileData:{name:string, profilePhoto:string} = {
     name:data.profileName,
     profilePhoto:data.profilePhoto || defaultLogoSrc
   }
-
+  
   let accessToken:string|undefined; //saving it outside of the .then so that it can be sent later
-  let userID:number;
-
+  ;
+  
+  
   // INSERTING INTO DB
-  User.create(insertUserData)
-  .then((user) => {
-    if(user.id){
-      userID = user.id
-    }
+  const t = await sequelize.transaction();
+  try {
+    const user = await User.create(insertUserData,{transaction: t})
+    
+    if(!user.id) throw 'Error'
+    
     accessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET)
     
-    return Company.create({
+    const company = await Company.create({
       ...insertCompanyData,
-      companyOwner:userID,
+      companyOwner:user.id,
       slug:createSlug(insertCompanyData.name)
-    })
-  })
-  .then((company)=>{
-    return Profile.create({
+    },{transaction: t})
+    
+    const profile = await Profile.create({
       ...insertProfileData,
-      user:userID,
+      user:user.id,
       company:company.id
-    })
-  })
-  .then(()=>{
+    },{transaction: t})
+    
+    await t.commit()
     return res.status(200).json({ message: 'User saved saved to the database!', accessToken: accessToken})
-  })
-  // An error will be caught if the email or username have already been used - just as a failsafe
-  .catch(() => {
+    
+  } catch(err){
+    await t.rollback()
     return res.status(403).json({message:'An error occured whilest entering the user.'}) //maybe the rows should be removed from all three tables if there was an error in one of them?
-  })
-
-
+  }
+  
+  
   
 }
 
