@@ -36,7 +36,7 @@ const insertNewCompany = async(req:Request, res:Response)=>{
         Company.create({
             ...data,
             slug: createSlug(data.name),
-            companyOwner: 1 // current fix for now, but will have to get this from the JWT
+            companyOwner: req.user.id //from
         })
         .then((company)=>{
             return res.status(200).json({message:'Company with id ' + company.id + ' created successfully.'})
