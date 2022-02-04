@@ -4,6 +4,8 @@ import db from '../config/database'
 import Profile from '../models/Profile'
 import User from '../models/User'
 
+import {UserAttributes} from '../ts_interfaces/User.Interface'
+
 interface CompanyAttributes {
   id?: number,
   logo?:string,
@@ -18,7 +20,9 @@ interface CompanyAttributes {
 interface CompanyCreationAttributes extends Optional<CompanyAttributes, "id"> {}
 
 interface CompanyInstance extends Model<CompanyAttributes, CompanyCreationAttributes>,
-    CompanyAttributes {}
+    CompanyAttributes {
+      User:UserAttributes // to solve the error we have when including User in Company SELECT query
+    }
 
 const Company =
 db.define<CompanyInstance>(
