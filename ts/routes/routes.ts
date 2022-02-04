@@ -2,7 +2,6 @@ import express from 'express'
 const router = express.Router()
 
 import passport from 'passport'
-import jwt from 'jsonwebtoken'
 
 // Validation middleware
 import RegisterValidaton from '../middleware/validation/Register.middleware'
@@ -19,19 +18,6 @@ import UserController from '../controllers/User.controller'
 import CompanyController from '../controllers/Company.controller'
 
 
-// POST method jwt auth middleware - if this is uncommented, no need to directly import the jwt auth, but still testing this
-/* router.use(['/profiles','/companies'],(req,res,next)=>{   
-    if(req.method === "POST") return passport.authenticate('jwt',{session:false})(req,res,next)
-    return next()
-})
-// PUT method jwt auth middleware
-router.use(['/profiles/:id','/companies/:id'],(req,res,next)=>{   
-    if(req.method === "PUT") return passport.authenticate('jwt',{session:false})(req,res,next)
-    return next()
-}) */
-
-
-
 // 1. --------- --------- --------- Profile routes
 router.get('/profiles', ProfileController.getProfiles)
 router.get('/profiles/:id', ProfileController.getProfileById)
@@ -41,16 +27,8 @@ router.delete('/profiles/:id', passport.authenticate('jwt',{session:false}), Pro
 
 // 2. --------- --------- ---------  User routes
 router.get('/countAllUsers', UserController.countAllUsers)
-// router.post('/register', RegisterValidaton, UserController.register)
-router.post('/register', UserController.register)
-
-router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), async (req,res)=>{
-    if(req.isAuthenticated()){
-        const accessToken: string | undefined = await jwt.sign({username: req.user.username}, process.env.ACCESS_TOKEN_SECRET)
-        return res.status(200).json({message:'User is authenticated.',token:accessToken})
-    }
-    return res.sendStatus(401) //added this just as a failsafe since passport will handle it
-})
+router.post('/register', RegisterValidaton, UserController.register)
+router.post('/login', LoginValidation, passport.authenticate('local',{session:false}), UserController.login)
 
 // 3. --------- --------- --------- Company routes
 router.get('/companies',CompanyController.getCompanies)

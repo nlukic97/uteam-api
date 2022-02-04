@@ -21,7 +21,7 @@ const LoginValidation = (req:Request,res:Response,next:Next) =>{
     
     
     // string sanitization 
-    const name: string = validator.trim(sentData.name + '').toLowerCase()
+    const name: string = validator.trim(sentData.name + '')
     const password: string = validator.trim(sentData.password + '')
 
     req.body.name = name

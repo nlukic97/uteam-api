@@ -35,10 +35,6 @@ db.define<ProfileInstance>(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate:{
-        notNull:{msg:'This cannot be empty'},
-        notEmpty:{msg:'This cannot be empty'},
-      }
     },
     profilePhoto: {
       type: DataTypes.STRING,

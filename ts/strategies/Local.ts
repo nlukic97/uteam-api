@@ -17,7 +17,6 @@ export default passport.use(new LocalStrategy({
 async(name:string, password:string, done) =>{
     const key: string = (validator.isEmail(name)) ? 'email': 'username'
     
-    
     const user = await User.findOne({where:{
         [key]:name
     }})

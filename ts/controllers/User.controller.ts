@@ -1,6 +1,5 @@
 import User from '../models/User'
 import { Request, Response } from 'express'
-import validator from 'validator'
 import * as bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { createSlug } from '../utils/functions'
@@ -80,7 +79,7 @@ const register = async (req: Request, res: Response) => {
       slug:createSlug(insertCompanyData.name)
     },{transaction: t})
     
-    const profile = await Profile.create({
+    await Profile.create({
       ...insertProfileData,
       user:user.id,
       company:company.id
@@ -93,40 +92,15 @@ const register = async (req: Request, res: Response) => {
     await t.rollback()
     return res.status(403).json({message:'An error occured whilest entering the user.'}) //maybe the rows should be removed from all three tables if there was an error in one of them?
   }
-  
-  
-  
 }
 
 /* --- User login --- */
 const login: ReqRes = async (req, res)=>{
-  /**  Data is validated using middleware/validation/Login.middleware.ts - check the routes file */
-  
-  const sentData:{name:string,password:string} = req.body //req.body sanitized and validated in middleware
-  const password = req.body.password
-  const name = req.body.name
-  
-  // determining if the user submitted an email or a username (used to find the user in the db to compare the login credentials against)
-  const key: string = (validator.isEmail(sentData.name)) ? 'email': 'username'
-  
-  const user = await User.findOne({
-    where: {
-      [key]:name
-    }
-  })
-  
-  if(user === null){
-    return res.status(404).json({message:`There is no user with this ${key}`})
+  if(req.isAuthenticated()){
+    const accessToken: string | undefined = await jwt.sign({username: req.user.username}, process.env.ACCESS_TOKEN_SECRET)
+    return res.status(200).json({message:'User is authenticated.',token:accessToken})
   }
-  
-  // comparing the submitted password with the user password in the db
-  const result: boolean = bcrypt.compareSync(password, user.password)
-  if(result === true){
-    const accessToken: string | undefined = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET)
-    return res.status(200).json({message:'You are logged in', accessToken: accessToken})
-  } else {
-    return res.status(401).json({message:'Incorrect password.'})
-  }
+  return res.sendStatus(401) //added this just as a failsafe since passport will handle it
 }
 
 //   method export

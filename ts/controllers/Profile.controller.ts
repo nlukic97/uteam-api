@@ -103,9 +103,6 @@ const updateProfile = async (req: Request, res: Response) => {
             }})
             if(companyExists === null) throw `A company with the id ${submitData.company} does not exist and cannot be assigned to this profile.`;
         }
-        
-        
-        
     } catch(err){
         return res.status(400).json({message:err})
     }
