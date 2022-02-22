@@ -5,16 +5,6 @@ import Profile from './Profile';
 // User Interface - used in multiple files so we use "import"
 import {UserAttributes} from '../ts_interfaces/User.Interface'
 
-/* interface UserAttributes {
-  id?: number, 
-  username: string,
-  role?:'company-user'|'company-admin'|'superadmin', //optional since we have a default value for enum
-  email: string,
-  password: string,
-  createdAt?: string,
-  updatedAt?: string
-} */
-
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
 
