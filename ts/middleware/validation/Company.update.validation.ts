@@ -13,55 +13,41 @@ const CompanyUpdateValidation = (req:Request, res:Response, next:Next) =>{
         slug?:string|undefined //added later to this object based on the submitted name
     } = {}
     
-    /** Validation of submitted data - checking if the submitted body parameters are not an empty string. */
+    /** Validation of name param */
     if(req.body.name !== undefined){
-        if(req.body.name === ''){
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.name = req.body.name
+        if(typeof req.body.name !== 'string'){
+            return res.status(400).json({message:'The name should be a string.'})
         }
-    }
-    if(req.body.logo !== undefined){
-        if(req.body.logo === ''){
-            return res.status(400).json({message:'There appear to be empty fields. Please check your inputs and try again.'})
-        } else {
-            submitData.logo = req.body.logo
+        req.body.name = req.body.name.trim()
+        if(!req.body.name){
+            return res.status(400).json({message:'The name cannot be an empty string.'})
+        }
+        submitData.name = req.body.name
+        submitData.slug = createSlug(submitData.name as string) //this line only executes if the param is a non-empty string
+        
+        if(!submitData.slug){
+            return res.status(400).json({message:'Unable to create slug - please make sure the name contains letters and / or numbers'})
         }
     }
     
+    /** Validation of logo param */
+    if(req.body.logo !== undefined){
+        if(typeof req.body.logo !== 'string'){
+            return res.status(400).json({message:'The logo should be a string.'})
+        }
+        req.body.logo = req.body.logo.trim()
+        if(!req.body.logo){
+            return res.status(400).json({message:'The logo cannot be an empty string.'})
+        }
+        submitData.logo = req.body.logo
+    }
     
     // making sure at least one of the editable parameters is present
     if(!submitData.name && !submitData.logo){
         return res.status(400).json({message:'No data submitted for update. Please submit the fields you would like to change (logo and / or name).'})
     }
-    
-    
-    //checking that present submitData is of correct type
-    if(
-       (submitData.name && typeof(submitData.name) !== 'string')
-    || (submitData.logo && typeof(submitData.logo) !== 'string')
-    ) {
-        return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
-    }
-
-    // trimming the available inputs, and returning an error if they are an empty string after trimming
-    if(submitData.name){
-        submitData.name = submitData.name.trim()
-        if(!submitData.name){
-            return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
-        }
-        submitData.slug = createSlug(submitData.name)
-    }
-
-    if(submitData.logo){
-        submitData.logo = submitData.logo.trim()
-        if(!submitData.logo){
-            return res.status(400).json({message:'Please make sure the submitted parameters are of the correct type.'})
-        }
-    }
 
     req.body = submitData
-
     next()
 }
 
