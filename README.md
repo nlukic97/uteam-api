@@ -18,19 +18,21 @@
 
 ### POST Routes
 
-| Endpoint     | Type | Expected request body                                       | Description                                                                                                                  |
-| ------------ | ---- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `/register`  | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `users` table.                                                                             |
-| `/profiles`  | POST | { `username`: string, `email`: string, `password`: string } | Used to insert a new row into the `profiles` table.                                                                          |
-| `/login`     | POST | { `name`: string, `password`: string}                       | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user. |
-| `/companies` | POST | { `logo`: string, `name`: string}                           | Used to insert a new row into the `companies` table.                                                                         |
+| Endpoint     | Type | Expected request body                                                                                                                                        | Description                                                                                                                                                                          |
+| ------------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/register`  | POST | { `username`: string, `email`: string, `password`: string, `profileName?`: string `profilePhoto`?: string, `companyLogo`?: string, `companyName`?: string, } | Used to insert a new row into the tables `users`, `companies` and `profiles`.                                                                                                        |
+| `/profiles`  | POST | { `name`: string, `profilePhoto`: string, `user`: number, `company`: number }                                                                                | Used to insert a new row into the `profiles` table.                                                                                                                                  |
+| `/login`     | POST | { `name`: string, `password`: string}                                                                                                                        | Used to authenticate a user. The `name` field for the request body can either be an email or a username of an existing user.                                                         |
+| `/companies` | POST | { `logo`: string, `name`: string}                                                                                                                            | Used to insert a new row into the `companies` table. The field _slug_ is generated from the name field. The field _companyOwner_ is from the id of the user who created the company. |
 
 ### PUT Routes
 
-| Endpoint          | Type | Expected request body                                          | Description                                                                                           |
-| ----------------- | ---- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `/profiles/{id}`  | PUT  | { `username`?: string, `email`?: string, `password`?: string } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table.  |
-| `/companies/{id}` | PUT  | { `logo`?: string, `name`?: string}                            | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `companies` table. |
+- `Please note:` that only a user who's id is present in the foreignKey of a row targeted by these PUT methods can make altering changes to them.
+
+| Endpoint          | Type | Expected request body                                            | Description                                                                                                                                                          |
+| ----------------- | ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/profiles/{id}`  | PUT  | { `name`?: string, `profilePhoto`?: string, `company`?: number } | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `profiles` table. Field user cannot be updated.                                   |
+| `/companies/{id}` | PUT  | { `logo`?: string, `name`?: string}                              | Used to updated any or all columns of a specific row (with an id of `{id}`) in the `companies` table. The field _slug_ is created automatically from the name field. |
 
 ### DELETE Routes
 
@@ -114,6 +116,7 @@ You also might need to leave the PORT variable in `.env` empty when deploying th
 - logo
 - name
 - slug
+- companyOwner ---> `foreignKey`
 
 ---
 
@@ -121,7 +124,8 @@ You also might need to leave the PORT variable in `.env` empty when deploying th
 
 - `User` to `Profile` = One to One
 - `Profile` to `Company` = One to Many _(one Company has many Profiles, one Profile belongs to one Company)_
+- `User` to `Company` = One to Many _(one User has many Companies, one Company belongs to one User)_
 
 Note:
 
-- _one company could have many users (and likewise, one user could belong one company) `through` the Profile table - still not implemented._
+- _one company could have many users `through` the Profile table - still not implemented._

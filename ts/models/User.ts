@@ -2,15 +2,8 @@ import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
 import Profile from './Profile';
 
-interface UserAttributes {
-  id?: number, 
-  username: string,
-  role?:'company-user'|'company-admin'|'superadmin', //optional since we have a default value for enum
-  email: string,
-  password: string,
-  createdAt?: string,
-  updatedAt?: string,
-}
+// User Interface - used in multiple files so we use "import"
+import {UserAttributes} from '../ts_interfaces/User.Interface'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
@@ -55,7 +48,7 @@ db.define<UserInstance>(
 
 /** Associations  */
 User.hasOne(Profile,{foreignKey:'user',constraints:true, onDelete:'cascade'}) // cascade - deleting a user will delete a profile
-Profile.belongsTo(User,{foreignKey:'user',constraints:true})
+Profile.belongsTo(User,{foreignKey:'user', constraints:true})
 
 
 // User.sync({ force: false })

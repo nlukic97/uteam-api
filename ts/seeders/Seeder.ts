@@ -15,7 +15,7 @@ const Seeder = () => {
   /* Add seeder calls here */
   UserSeeder(20)
   CompanySeeder(20)
-  ProfileSeeder(19)
+  ProfileSeeder(20)
 }
 
 /* Running the seeder */

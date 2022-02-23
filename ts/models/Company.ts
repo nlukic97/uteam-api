@@ -2,12 +2,16 @@ import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
 
 import Profile from '../models/Profile'
+import User from '../models/User'
+
+import {UserAttributes} from '../ts_interfaces/User.Interface'
 
 interface CompanyAttributes {
   id?: number,
   logo?:string,
   name: string,
   slug:string,
+  companyOwner:number,
   createdAt?: string,
   updatedAt?: string,
 }
@@ -16,7 +20,9 @@ interface CompanyAttributes {
 interface CompanyCreationAttributes extends Optional<CompanyAttributes, "id"> {}
 
 interface CompanyInstance extends Model<CompanyAttributes, CompanyCreationAttributes>,
-    CompanyAttributes {}
+    CompanyAttributes {
+      User:UserAttributes // to solve the error we have when including User in Company SELECT query
+    }
 
 const Company =
 db.define<CompanyInstance>(
@@ -39,6 +45,10 @@ db.define<CompanyInstance>(
     slug: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    companyOwner:{
+      type:DataTypes.INTEGER.UNSIGNED,
+      allowNull:true
     }
   },
   {
@@ -47,7 +57,12 @@ db.define<CompanyInstance>(
 );
 
 /* Associations */
+// Company - Profile
 Company.hasMany(Profile,{foreignKey:'company',constraints:true})
 Profile.belongsTo(Company,{foreignKey:'company',constraints:true})
+
+// User - Company
+User.hasMany(Company,{foreignKey:'companyOwner'})
+Company.belongsTo(User,{foreignKey:'companyOwner'})
 
 export default Company

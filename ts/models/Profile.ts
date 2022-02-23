@@ -1,6 +1,8 @@
 import { DataTypes, Model, Optional } from 'sequelize'
 import db from '../config/database'
 
+import {UserAttributes} from '../ts_interfaces/User.Interface'
+
 interface ProfileAttributes {
   id?: number,
   status?:'pending'|'published', 
@@ -16,7 +18,9 @@ interface ProfileAttributes {
 interface ProfileCreationAttributes extends Optional<ProfileAttributes, "id"> {}
 
 interface ProfileInstance extends Model<ProfileAttributes, ProfileCreationAttributes>,
-    ProfileAttributes {}
+    ProfileAttributes {
+      User:UserAttributes //this will be ProfileAttributes as defined above
+    }
 
 const Profile =
 db.define<ProfileInstance>(
@@ -34,7 +38,7 @@ db.define<ProfileInstance>(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     profilePhoto: {
       type: DataTypes.STRING,
